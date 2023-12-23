@@ -1,6 +1,17 @@
 body {
+  height: 100vh;
   background-color: darkolivegreen;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#board {
+  display: flex;
+}
+
+.cell {
+  height: 20px;
+  width: 20px;
+  border: 1px solid black;
 }
