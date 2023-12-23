@@ -1,9 +1,12 @@
 /*-------------------------------- Constants --------------------------------*/
+const baddieTypes = ['baddieA', 'baddieB', 'baddieC']
+
 class Cell {
   constructor(xPos, yPos){
     this.xPos = xPos
     this.yPos = yPos
   }
+  baddie = null
 }
 
 
@@ -39,8 +42,9 @@ init()
 
 function init() {
   generateBoardCells()
-  console.log(boardCells)
   generateBoardCellElements()
+  addBaddies()
+  console.log(boardCells)
 }
 
 function checkForRow() {
@@ -97,6 +101,22 @@ function movePieceDown() {
 }
 
 function addBaddies() {
+  let baddiesToAdd = []
+  while (baddiesToAdd.length < 4) {
+    let baddieXCoord = Math.ceil(Math.random() * 8)
+    let baddieYCoord = Math.ceil(Math.random() * 10)
+    if (!baddiesToAdd.some(baddie => baddie.x === baddieXCoord && baddie.y === baddieYCoord)) {
+      baddiesToAdd.push({x: baddieXCoord, y: baddieYCoord})
+    }
+  }
+  baddiesToAdd.forEach(baddie => {
+    let baddieTypeIdx = Math.floor(Math.random() * baddieTypes.length)
+    boardCells.forEach(cell => {
+      if (cell.xPos === baddie.x && cell.yPos === baddie.y) {
+        cell.baddie = baddieTypes[baddieTypeIdx]
+      }
+    })
+  })
 }
 
 
