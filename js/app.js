@@ -9,9 +9,13 @@ class Cell {
   baddie = null
 }
 
+let baddieAColor = 'lime'
+let baddieBColor = 'purple'
+let baddieCColor = 'cornflowerblue'
+
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece
+let currentPiece, nextPiece, boardCellElements
 let boardCells = []
 
 
@@ -43,7 +47,9 @@ init()
 function init() {
   generateBoardCells()
   generateBoardCellElements()
+  boardCellElements = document.querySelectorAll('.cell')
   addBaddies()
+  renderBoard()
   console.log(boardCells)
 }
 
@@ -62,6 +68,20 @@ function generatePiece() {
 function checkForCollision() {
 }
 
+function renderBoard() {
+  boardCellElements.forEach((cellEl, idx) => {
+    if (boardCells[idx].baddie === 'baddieA') {
+      cellEl.style.backgroundColor = baddieAColor
+    }
+    if (boardCells[idx].baddie === 'baddieB') {
+      cellEl.style.backgroundColor = baddieBColor
+    }
+    if (boardCells[idx].baddie === 'baddieC') {
+      cellEl.style.backgroundColor = baddieCColor
+    }
+  })
+}
+
 function generateBoardCellElements() {
   for (let x = 1; x <= 8; x++) {
     let newColumn = document.createElement('div')
@@ -77,7 +97,7 @@ function generateBoardCellElements() {
 
 function generateBoardCells() {
   for (let x = 1; x <= 8; x++) {
-    for (let y = 1; y <= 16; y++) {
+    for (let y = 16; y >= 1; y--) {
       let newCell = new Cell(x, y)
       boardCells.push(newCell)
     }
