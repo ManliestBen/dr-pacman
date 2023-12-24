@@ -9,9 +9,7 @@ class Cell {
   baddie = null
 }
 
-let baddieAColor = 'lime'
-let baddieBColor = 'purple'
-let baddieCColor = 'cornflowerblue'
+const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 
 /*---------------------------- Variables (state) ----------------------------*/
@@ -63,6 +61,9 @@ function pieceFalls() {
 }
 
 function generatePiece() {
+  let randHeadIdx = Math.floor(Math.random() * pieceColors.length)
+  let randTailIdx = Math.floor(Math.random() * pieceColors.length)
+  return {head: pieceColors[randHeadIdx], tail: pieceColors[randTailIdx]}
 }
 
 function checkForCollision() {
@@ -71,13 +72,20 @@ function checkForCollision() {
 function renderBoard() {
   boardCellElements.forEach((cellEl, idx) => {
     if (boardCells[idx].baddie === 'baddieA') {
-      cellEl.style.backgroundColor = baddieAColor
+      cellEl.style.backgroundColor = pieceColors[0]
+      cellEl.style.backgroundImage = "url('./assets/images/clyde.png')"
+      cellEl.style.backgroundSize = "20px"
+      // cellEl.textContent = '👾'
     }
     if (boardCells[idx].baddie === 'baddieB') {
-      cellEl.style.backgroundColor = baddieBColor
+      cellEl.style.backgroundColor = pieceColors[1]
+      cellEl.style.backgroundImage = "url('./assets/images/pinky.png')"
+      cellEl.style.backgroundSize = "20px"
     }
     if (boardCells[idx].baddie === 'baddieC') {
-      cellEl.style.backgroundColor = baddieCColor
+      cellEl.style.backgroundColor = pieceColors[2]
+      cellEl.style.backgroundImage = "url('./assets/images/inky.png')"
+      cellEl.style.backgroundSize = "20px"
     }
   })
 }
