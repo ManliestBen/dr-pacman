@@ -53,7 +53,7 @@ const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements, gameTickInterval
+let currentPiece, nextPiece, boardCellElements, gameTickInterval, score
 let boardCells = []
 
 
@@ -83,6 +83,7 @@ init()
 
 
 function init() {
+  score = 0
   generateBoardCells()
   generateBoardCellElements()
   boardCellElements = document.querySelectorAll('.cell')
@@ -124,6 +125,7 @@ function gameTick() {
 
 function handleCollision() {
   // check for complete rows/columns
+  clearCellsAndCalculatePoints()
     // if yes, clear and check for cascades
     // if no
     if (boardCells[49].fill || boardCells[65].fill) {
@@ -133,6 +135,45 @@ function handleCollision() {
       lockInPlace()
       startNextPiece()
     }
+}
+
+function clearCellsAndCalculatePoints() {
+  let rowMatchData = getRowMatchData()
+  let columnMatchData = getColumnMatchData()
+  if (rowMatchData.length || columnMatchData.length) {
+    let cellsToClear = []
+    for (let i = 7; i >= 4; i--) {
+      rowMatchData.forEach(dataSet => {
+        if (dataSet.n === i) {
+          let cellToAdd = dataSet.idx
+          for (let j = 0; j < i; j++) {
+            console.log(cellToAdd)
+            if (!cellsToClear.includes(cellToAdd)){
+              cellsToClear.push(cellToAdd)
+            }
+            cellToAdd += 16
+          }
+        }
+      })
+      columnMatchData.forEach(dataSet => {
+        if (dataSet.n === i) {
+          let cellToAdd = dataSet.idx
+          for (let j = 0; j < i; j++) {
+            console.log(cellToAdd)
+            if (!cellsToClear.includes(cellToAdd)){
+              cellsToClear.push(cellToAdd)
+            }
+            cellToAdd -= 1
+          }
+        }
+      })
+    }
+    score += calculatePoints(cellsToClear.length)
+  }
+}
+
+function calculatePoints(numCellsCleared) {
+  return 2 ^ numCellsCleared
 }
 
 function lockInPlace() {
