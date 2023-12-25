@@ -15,7 +15,7 @@ const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements
+let currentPiece, nextPiece, boardCellElements, gameTickInterval, tickCounter
 let boardCells = []
 
 
@@ -61,7 +61,23 @@ function checkForRow() {
 function checkForColumn() {
 }
 
+function gameTick() {
+  pieceFalls()
+  renderBoard()
+  tickCounter++
+  console.log(tickCounter)
+  if (tickCounter === 14) {
+    clearInterval(gameTickInterval)
+  }
+}
+
 function pieceFalls() {
+  boardCells[currentPiece.color1CellIdx].fill = null
+  boardCells[currentPiece.color2CellIdx].fill = null
+  currentPiece.color1CellIdx += 1
+  currentPiece.color2CellIdx += 1
+  boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+  boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
 }
 
 function generatePiece() {
@@ -77,6 +93,8 @@ function startNextPiece() {
   console.log(currentPiece)
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+  tickCounter = 0
+  gameTickInterval = setInterval(gameTick, 1000)
 }
 
 function checkForCollision() {
@@ -107,6 +125,9 @@ function renderBoard() {
     }
     if (boardCells[idx].fill === pieceColors[2]) {
       cellEl.style.backgroundColor = pieceColors[2]
+    }
+    if (!boardCells[idx].fill) {
+      cellEl.style.backgroundColor = null
     }
   })
 }
