@@ -30,7 +30,23 @@ class Cell {
     if (edgeIdxValues.right.includes(this.cellIdx)) return null
     return boardCells[this.cellIdx + 16]
   }
-  
+  calcNumMatchesRow() {
+    if (this.fill && this.calcIdxOfFillType() === this.lookRight()?.calcIdxOfFillType()){
+      return 1 + this.lookRight().calcNumMatchesRow()
+    } else {
+      return 1
+    }
+  }
+  calcNumMatchesColumn(){
+    if (this.fill && this.calcIdxOfFillType() === this.lookUp()?.calcIdxOfFillType()){
+      return 1 + this.lookUp().calcNumMatchesColumn()
+    } else {
+      return 1
+    }
+  }
+  calcIdxOfFillType() {
+    return baddieTypes.indexOf(this.fill) !== -1 ? baddieTypes.indexOf(this.fill) : pieceColors.indexOf(this.fill)
+  }
 }
 
 const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
@@ -78,6 +94,11 @@ function init() {
 }
 
 function checkForRow() {
+  for (let x = 0; x <= 4; x++) {
+    for (let y = 0; y <= 16; y++) {
+
+    }
+  }
 }
 
 function checkForColumn() {
@@ -129,7 +150,6 @@ function startNextPiece() {
   currentPiece = nextPiece
   nextPiece = generatePiece()
   currentPiece.orientation = 'horizontal1'
-  console.log(currentPiece)
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
   clearInterval(gameTickInterval)
@@ -369,5 +389,4 @@ function addBaddies() {
     boardCells[baddieIdx].locked = true
   })
 }
-
 
