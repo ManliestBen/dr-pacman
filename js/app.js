@@ -62,13 +62,15 @@ function checkForColumn() {
 }
 
 function gameTick() {
+  if (tickCounter >= 14) {
+    clearInterval(gameTickInterval)
+    // call collision function here 
+    return
+  }
   pieceFalls()
   renderBoard()
   tickCounter++
   console.log(tickCounter)
-  if (tickCounter === 14) {
-    clearInterval(gameTickInterval)
-  }
 }
 
 function pieceFalls() {
@@ -89,7 +91,7 @@ function generatePiece() {
 function startNextPiece() {
   currentPiece = nextPiece
   nextPiece = generatePiece()
-  currentPiece.orientation = 'horizontal'
+  currentPiece.orientation = 'horizontal1'
   console.log(currentPiece)
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
@@ -157,18 +159,78 @@ function generateBoardCells() {
 
 function rotatePiece() {
   console.log('rotatePiece invoked')
+  if (currentPiece.orientation === 'horizontal1') {
+  boardCells[currentPiece.color2CellIdx].fill = null
+  currentPiece.color2CellIdx = currentPiece.color1CellIdx - 1
+  boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+  currentPiece.orientation = 'vertical1'
+  renderBoard()
+  } else if (currentPiece.orientation === 'vertical1') {
+    let idx1Placeholder = currentPiece.color1CellIdx
+    boardCells[currentPiece.color2CellIdx].fill = null
+    currentPiece.color2CellIdx = idx1Placeholder
+    currentPiece.color1CellIdx = currentPiece.color2CellIdx + 16
+    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+    boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+    currentPiece.orientation = 'horizontal2'
+    renderBoard()
+  } else if (currentPiece.orientation === 'horizontal2') {
+    boardCells[currentPiece.color1CellIdx].fill = null
+    currentPiece.color1CellIdx = currentPiece.color2CellIdx - 1
+    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+    currentPiece.orientation = 'vertical2'
+    renderBoard()
+  } else if (currentPiece.orientation === 'vertical2') {
+    let idx2Placeholder = currentPiece.color2CellIdx
+    boardCells[currentPiece.color1CellIdx].fill = null
+    currentPiece.color1CellIdx = idx2Placeholder
+    currentPiece.color2CellIdx = currentPiece.color1CellIdx + 16
+    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+    boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+    currentPiece.orientation = 'horizontal1'
+    renderBoard()
+  }
 }
 
 function movePieceLeft() {
   console.log('movePieceLeft invoked')
+  if (currentPiece.color1CellIdx - 16 > 0 && currentPiece.color2CellIdx - 16 > 0) {
+    boardCells[currentPiece.color1CellIdx].fill = null
+    boardCells[currentPiece.color2CellIdx].fill = null
+    currentPiece.color1CellIdx -= 16
+    currentPiece.color2CellIdx -= 16
+    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+    boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+    renderBoard()
+  }
 }
 
 function movePieceRight() {
   console.log('movePieceRight invoked')
+  if (currentPiece.color1CellIdx + 16 < 128 && currentPiece.color2CellIdx + 16 < 127) {
+    boardCells[currentPiece.color1CellIdx].fill = null
+    boardCells[currentPiece.color2CellIdx].fill = null
+    currentPiece.color1CellIdx += 16
+    currentPiece.color2CellIdx += 16
+    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+    boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+    renderBoard()
+  }
 }
 
 function movePieceDown() {
   console.log('movePieceDown invoked')
+  if (tickCounter < 14) {
+    boardCells[currentPiece.color1CellIdx].fill = null
+    boardCells[currentPiece.color2CellIdx].fill = null
+    currentPiece.color1CellIdx += 1
+    currentPiece.color2CellIdx += 1
+    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+    boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+    tickCounter++
+    console.log(tickCounter)
+    renderBoard()
+  }
 }
 
 function addBaddies() {
