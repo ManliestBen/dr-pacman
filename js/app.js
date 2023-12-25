@@ -125,14 +125,14 @@ function gameTick() {
 
 function handleCollision() {
   // check for complete rows/columns
-  clearCellsAndCalculatePoints()
-    // if yes, clear and check for cascades
-    // if no
-    if (boardCells[49].fill || boardCells[65].fill) {
-      clearInterval(gameTickInterval)
-      console.log('game over')
-    } else {
-      lockInPlace()
+  // if yes, clear and check for cascades
+  // if no
+  if (boardCells[49].fill || boardCells[65].fill) {
+    clearInterval(gameTickInterval)
+    console.log('game over')
+  } else {
+    lockInPlace()
+    clearCellsAndCalculatePoints()
       startNextPiece()
     }
 }
@@ -147,7 +147,6 @@ function clearCellsAndCalculatePoints() {
         if (dataSet.n === i) {
           let cellToAdd = dataSet.idx
           for (let j = 0; j < i; j++) {
-            console.log(cellToAdd)
             if (!cellsToClear.includes(cellToAdd)){
               cellsToClear.push(cellToAdd)
             }
@@ -159,7 +158,6 @@ function clearCellsAndCalculatePoints() {
         if (dataSet.n === i) {
           let cellToAdd = dataSet.idx
           for (let j = 0; j < i; j++) {
-            console.log(cellToAdd)
             if (!cellsToClear.includes(cellToAdd)){
               cellsToClear.push(cellToAdd)
             }
@@ -169,7 +167,16 @@ function clearCellsAndCalculatePoints() {
       })
     }
     score += calculatePoints(cellsToClear.length)
+    clearCells(cellsToClear)
+    renderBoard()
   }
+}
+
+function clearCells(cellsToClear) {
+  cellsToClear.forEach(cell => {
+    boardCells[cell].fill = null
+    boardCells[cell].locked = false
+  })
 }
 
 function calculatePoints(numCellsCleared) {
@@ -208,18 +215,18 @@ function startNextPiece() {
 
 function checkForCollision() {
   if (currentPiece.orientation === 'vertical1') {
-    if (boardCells[currentPiece.color1CellIdx + 1].locked || !boardCells[currentPiece.color1CellIdx].lookDown()) {
+    if (!boardCells[currentPiece.color1CellIdx].lookDown() || boardCells[currentPiece.color1CellIdx + 1].locked) {
       console.log('collision')
       return true
     }
   } else if (currentPiece.orientation === 'vertical2') {
-    if (boardCells[currentPiece.color2CellIdx + 1].locked || !boardCells[currentPiece.color2CellIdx].lookDown()) {
+    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].locked ) {
       console.log('collision')
       return true
     }
   } else {
     if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].locked || boardCells[currentPiece.color1CellIdx + 1].locked) {
-      console.log('collision')
+      console.log('collisionaaa')
       return true
     }
   }
@@ -253,6 +260,7 @@ function renderBoard() {
     }
     if (!boardCells[idx].fill) {
       cellEl.style.backgroundColor = null
+      cellEl.style.backgroundImage = null
     }
   })
 }
