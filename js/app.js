@@ -96,13 +96,13 @@ function handleCollision() {
   // check for complete rows/columns
     // if yes, clear and check for cascades
     // if no
-      // check for end of game
-        // if yes, end game
-        // if no
-          // lock new cells
-          lockInPlace()
-          // drop next piece
-          startNextPiece()
+    if (boardCells[49].fill || boardCells[65].fill) {
+      clearInterval(gameTickInterval)
+      console.log('game over')
+    } else {
+      lockInPlace()
+      startNextPiece()
+    }
 }
 
 function lockInPlace() {
