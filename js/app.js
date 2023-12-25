@@ -67,6 +67,7 @@ function gameTick() {
     // call collision function here 
     return
   }
+  checkForCollision()
   pieceFalls()
   renderBoard()
   tickCounter++
@@ -100,6 +101,19 @@ function startNextPiece() {
 }
 
 function checkForCollision() {
+  if (currentPiece.orientation === 'vertical1') {
+    if (boardCells[currentPiece.color1CellIdx + 1].locked) {
+      console.log('collision')
+    }
+  } else if (currentPiece.orientation === 'vertical2') {
+    if (boardCells[currentPiece.color2CellIdx + 1].locked) {
+      console.log('collision')
+    }
+  } else {
+    if (boardCells[currentPiece.color2CellIdx + 1].locked || boardCells[currentPiece.color1CellIdx + 1].locked) {
+      console.log('collision')
+    }
+  }
 }
 
 function renderBoard() {
