@@ -93,15 +93,24 @@ function init() {
   renderBoard()
 }
 
-function checkForRow() {
-  for (let x = 0; x <= 4; x++) {
-    for (let y = 0; y <= 16; y++) {
-
+function getRowMatchData() {
+  let cellMatchData = []
+  boardCells.forEach(cell => {
+    if (cell.calcNumMatchesRow() >= 4) {
+      cellMatchData.push({idx: cell.cellIdx, n: cell.calcNumMatchesRow()})
     }
-  }
+  })
+  return cellMatchData
 }
 
-function checkForColumn() {
+function getColumnMatchData() {
+  let cellMatchData = []
+  boardCells.forEach(cell => {
+    if (cell.calcNumMatchesColumn() >= 4) {
+      cellMatchData.push({idx: cell.cellIdx, n: cell.calcNumMatchesColumn()})
+    }
+  })
+  return cellMatchData
 }
 
 function gameTick() {
