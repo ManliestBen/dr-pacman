@@ -1,13 +1,35 @@
 /*-------------------------------- Constants --------------------------------*/
 const baddieTypes = ['baddieA', 'baddieB', 'baddieC']
 
+const edgeIdxValues = {
+  top: [0, 16, 32, 48, 64, 80, 96, 112],
+  right: [112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127],
+  bottom: [15, 31, 47, 63, 79, 95, 111, 127],
+  left: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+}
+
 class Cell {
-  constructor(xPos, yPos){
-    this.xPos = xPos
-    this.yPos = yPos
+  constructor(cellIdx){
+    this.cellIdx = cellIdx
   }
   fill = null
   locked = false
+  lookUp() {
+    if (edgeIdxValues.top.includes(this.cellIdx)) return null
+    return boardCells[this.cellIdx - 1]
+  }
+  lookDown() {
+    if (edgeIdxValues.bottom.includes(this.cellIdx)) return null
+    return boardCells[this.cellIdx + 1]
+  }
+  lookLeft() {
+    if (edgeIdxValues.left.includes(this.cellIdx)) return null
+    return boardCells[this.cellIdx - 16]
+  }
+  lookRight() {
+    if (edgeIdxValues.right.includes(this.cellIdx)) return null
+    return boardCells[this.cellIdx + 16]
+  }
   
 }
 
@@ -187,7 +209,8 @@ function generateBoardCellElements() {
 function generateBoardCells() {
   for (let x = 1; x <= 8; x++) {
     for (let y = 16; y >= 1; y--) {
-      let newCell = new Cell(x, y)
+      let cellIdx = 16 * x - y
+      let newCell = new Cell(cellIdx)
       boardCells.push(newCell)
     }
   }
@@ -266,6 +289,27 @@ function movePieceRight() {
 
 function movePieceDown() {
   console.log('movePieceDown invoked')
+  if (
+    // If piece is horizontal and the spot below is locked or an edge
+    ((currentPiece.orientation === 'horizontal1' || currentPiece.orientation === 'horizontal2') && 
+    (
+      !boardCells[currentPiece.color1CellIdx].lookDown() ||
+      boardCells[currentPiece.color1CellIdx].lookDown().locked ||
+      boardCells[currentPiece.color2CellIdx].lookDown().locked
+    )) ||
+    // If piece is vertical and the spot below is locked or an edge
+    (currentPiece.orientation === 'vertical1' && 
+      (!boardCells[currentPiece.color1CellIdx].lookDown() ||
+      boardCells[currentPiece.color1CellIdx].lookDown().locked)
+    ) ||
+    (currentPiece.orientation === 'vertical2' && 
+      (!boardCells[currentPiece.color2CellIdx].lookDown() ||
+      boardCells[currentPiece.color2CellIdx].lookDown().locked)
+    ) 
+  ) {
+    handleCollision()
+    return
+  }
   if (tickCounter < 14) {
     boardCells[currentPiece.color1CellIdx].fill = null
     boardCells[currentPiece.color2CellIdx].fill = null
@@ -274,7 +318,6 @@ function movePieceDown() {
     boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
     boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
     tickCounter++
-    console.log(tickCounter)
     renderBoard()
   }
 }
@@ -284,18 +327,15 @@ function addBaddies() {
   while (baddiesToAdd.length < 4) {
     let baddieXCoord = Math.ceil(Math.random() * 8)
     let baddieYCoord = Math.ceil(Math.random() * 10)
-    if (!baddiesToAdd.some(baddie => baddie.x === baddieXCoord && baddie.y === baddieYCoord)) {
-      baddiesToAdd.push({x: baddieXCoord, y: baddieYCoord})
+    let baddieIdx = 16 * baddieXCoord - baddieYCoord
+    if (!baddiesToAdd.includes(baddieIdx)) {
+      baddiesToAdd.push(baddieIdx)
     }
   }
-  baddiesToAdd.forEach(baddie => {
+  baddiesToAdd.forEach(baddieIdx => {
     let baddieTypeIdx = Math.floor(Math.random() * baddieTypes.length)
-    boardCells.forEach(cell => {
-      if (cell.xPos === baddie.x && cell.yPos === baddie.y) {
-        cell.fill = baddieTypes[baddieTypeIdx]
-        cell.locked = true
-      }
-    })
+    boardCells[baddieIdx].fill = baddieTypes[baddieTypeIdx]
+    boardCells[baddieIdx].locked = true
   })
 }
 
