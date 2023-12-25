@@ -53,7 +53,7 @@ const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements, gameTickInterval, score
+let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive
 let boardCells = []
 
 
@@ -63,17 +63,19 @@ const boardElement = document.querySelector('#board')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (evt) => {
-  if (evt.key === 's') {
-    movePieceDown()
-  }
-  if (evt.key === 'a') {
-    movePieceLeft()
-  }
-  if (evt.key === 'd') {
-    movePieceRight()
-  }
-  if (evt.key === ' ' || evt.key === 'w') {
-    rotatePiece()
+  if (!cascadeActive) {
+    if (evt.key === 's') {
+      movePieceDown()
+    }
+    if (evt.key === 'a') {
+      movePieceLeft()
+    }
+    if (evt.key === 'd') {
+      movePieceRight()
+    }
+    if (evt.key === ' ' || evt.key === 'w') {
+      rotatePiece()
+    }
   }
 })
 
@@ -84,6 +86,7 @@ init()
 
 function init() {
   score = 0
+  cascadeActive = false
   generateBoardCells()
   generateBoardCellElements()
   boardCellElements = document.querySelectorAll('.cell')
@@ -115,11 +118,13 @@ function getColumnMatchData() {
 }
 
 function gameTick() {
-  if(checkForCollision()) {
-    handleCollision()
-  } else {
-    pieceFalls()
-    renderBoard()
+  if (!cascadeActive) {
+    if(checkForCollision()) {
+      handleCollision()
+    } else {
+      pieceFalls()
+      renderBoard()
+    }
   }
 }
 
@@ -133,8 +138,8 @@ function handleCollision() {
   } else {
     lockInPlace()
     clearCellsAndCalculatePoints()
-      startNextPiece()
-    }
+    startNextPiece()
+  }
 }
 
 function clearCellsAndCalculatePoints() {
@@ -169,6 +174,11 @@ function clearCellsAndCalculatePoints() {
     score += calculatePoints(cellsToClear.length)
     clearCells(cellsToClear)
     renderBoard()
+    cascadeActive = true
+    console.log('waiting 5 seconds')
+    setTimeout(() => {
+      cascadeActive = false
+    }, 5000)
   }
 }
 
