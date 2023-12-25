@@ -159,6 +159,15 @@ function generateBoardCells() {
 
 function rotatePiece() {
   console.log('rotatePiece invoked')
+  // Address edge case for flipping a vertical piece on right edge of board
+  if ((currentPiece.orientation === 'vertical1' || currentPiece.orientation === 'vertical2') && (currentPiece.color1CellIdx > 112)) {
+    boardCells[currentPiece.color1CellIdx].fill = null
+    boardCells[currentPiece.color2CellIdx].fill = null
+    currentPiece.color1CellIdx -= 16
+    currentPiece.color2CellIdx -= 16
+    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+    boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+  }
   if (currentPiece.orientation === 'horizontal1') {
   boardCells[currentPiece.color2CellIdx].fill = null
   currentPiece.color2CellIdx = currentPiece.color1CellIdx - 1
