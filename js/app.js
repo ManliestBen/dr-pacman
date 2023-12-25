@@ -6,7 +6,9 @@ class Cell {
     this.xPos = xPos
     this.yPos = yPos
   }
-  baddie = null
+  fill = null
+  locked = false
+  
 }
 
 const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
@@ -47,8 +49,10 @@ function init() {
   generateBoardCellElements()
   boardCellElements = document.querySelectorAll('.cell')
   addBaddies()
-  renderBoard()
+  nextPiece = generatePiece()
   console.log(boardCells)
+  startNextPiece()
+  renderBoard()
 }
 
 function checkForRow() {
@@ -63,7 +67,16 @@ function pieceFalls() {
 function generatePiece() {
   let randHeadIdx = Math.floor(Math.random() * pieceColors.length)
   let randTailIdx = Math.floor(Math.random() * pieceColors.length)
-  return {head: pieceColors[randHeadIdx], tail: pieceColors[randTailIdx]}
+  return {color1: pieceColors[randHeadIdx], color2: pieceColors[randTailIdx], color1CellIdx: 49, color2CellIdx: 65}
+}
+
+function startNextPiece() {
+  currentPiece = nextPiece
+  nextPiece = generatePiece()
+  currentPiece.orientation = 'horizontal'
+  console.log(currentPiece)
+  boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+  boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
 }
 
 function checkForCollision() {
@@ -71,21 +84,29 @@ function checkForCollision() {
 
 function renderBoard() {
   boardCellElements.forEach((cellEl, idx) => {
-    if (boardCells[idx].baddie === 'baddieA') {
+    if (boardCells[idx].fill === 'baddieA') {
       cellEl.style.backgroundColor = pieceColors[0]
       cellEl.style.backgroundImage = "url('./assets/images/clyde.png')"
       cellEl.style.backgroundSize = "20px"
-      // cellEl.textContent = '👾'
     }
-    if (boardCells[idx].baddie === 'baddieB') {
+    if (boardCells[idx].fill === 'baddieB') {
       cellEl.style.backgroundColor = pieceColors[1]
       cellEl.style.backgroundImage = "url('./assets/images/pinky.png')"
       cellEl.style.backgroundSize = "20px"
     }
-    if (boardCells[idx].baddie === 'baddieC') {
+    if (boardCells[idx].fill === 'baddieC') {
       cellEl.style.backgroundColor = pieceColors[2]
       cellEl.style.backgroundImage = "url('./assets/images/inky.png')"
       cellEl.style.backgroundSize = "20px"
+    }
+    if (boardCells[idx].fill === pieceColors[0]) {
+      cellEl.style.backgroundColor = pieceColors[0]
+    }
+    if (boardCells[idx].fill === pieceColors[1]) {
+      cellEl.style.backgroundColor = pieceColors[1]
+    }
+    if (boardCells[idx].fill === pieceColors[2]) {
+      cellEl.style.backgroundColor = pieceColors[2]
     }
   })
 }
@@ -111,6 +132,7 @@ function generateBoardCells() {
     }
   }
 }
+
 
 function rotatePiece() {
   console.log('rotatePiece invoked')
@@ -141,7 +163,8 @@ function addBaddies() {
     let baddieTypeIdx = Math.floor(Math.random() * baddieTypes.length)
     boardCells.forEach(cell => {
       if (cell.xPos === baddie.x && cell.yPos === baddie.y) {
-        cell.baddie = baddieTypes[baddieTypeIdx]
+        cell.fill = baddieTypes[baddieTypeIdx]
+        cell.locked = true
       }
     })
   })
