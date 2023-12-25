@@ -63,15 +63,34 @@ function checkForColumn() {
 
 function gameTick() {
   if (tickCounter >= 14) {
-    clearInterval(gameTickInterval)
-    // call collision function here 
-    return
+    handleCollision()
   }
-  checkForCollision()
-  pieceFalls()
-  renderBoard()
-  tickCounter++
-  console.log(tickCounter)
+  if(checkForCollision()) {
+    handleCollision()
+  } else {
+    pieceFalls()
+    renderBoard()
+    tickCounter++
+    console.log(tickCounter)
+  }
+}
+
+function handleCollision() {
+  // check for complete rows/columns
+    // if yes, clear and check for cascades
+    // if no
+      // check for end of game
+        // if yes, end game
+        // if no
+          // lock new cells
+          lockInPlace()
+          // drop next piece
+          startNextPiece()
+}
+
+function lockInPlace() {
+  boardCells[currentPiece.color1CellIdx].locked = true
+  boardCells[currentPiece.color2CellIdx].locked = true
 }
 
 function pieceFalls() {
@@ -84,9 +103,9 @@ function pieceFalls() {
 }
 
 function generatePiece() {
-  let randHeadIdx = Math.floor(Math.random() * pieceColors.length)
-  let randTailIdx = Math.floor(Math.random() * pieceColors.length)
-  return {color1: pieceColors[randHeadIdx], color2: pieceColors[randTailIdx], color1CellIdx: 49, color2CellIdx: 65}
+  let randIdx1 = Math.floor(Math.random() * pieceColors.length)
+  let randIdx2 = Math.floor(Math.random() * pieceColors.length)
+  return {color1: pieceColors[randIdx1], color2: pieceColors[randIdx2], color1CellIdx: 49, color2CellIdx: 65}
 }
 
 function startNextPiece() {
@@ -97,6 +116,7 @@ function startNextPiece() {
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
   tickCounter = 0
+  clearInterval(gameTickInterval)
   gameTickInterval = setInterval(gameTick, 1000)
 }
 
@@ -104,14 +124,17 @@ function checkForCollision() {
   if (currentPiece.orientation === 'vertical1') {
     if (boardCells[currentPiece.color1CellIdx + 1].locked) {
       console.log('collision')
+      return true
     }
   } else if (currentPiece.orientation === 'vertical2') {
     if (boardCells[currentPiece.color2CellIdx + 1].locked) {
       console.log('collision')
+      return true
     }
   } else {
     if (boardCells[currentPiece.color2CellIdx + 1].locked || boardCells[currentPiece.color1CellIdx + 1].locked) {
       console.log('collision')
+      return true
     }
   }
 }
