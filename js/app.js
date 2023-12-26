@@ -1,5 +1,6 @@
 /*-------------------------------- Constants --------------------------------*/
 const baddieTypes = ['baddieA', 'baddieB', 'baddieC']
+const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 const edgeIdxValues = {
   top: [0, 16, 32, 48, 64, 80, 96, 112],
@@ -50,11 +51,10 @@ class Cell {
   }
 }
 
-const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive, cascadeDelayInterval
+let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive
 let boardCells = []
 
 
@@ -86,7 +86,6 @@ init()
 
 
 function init() {
-  cascadeDelayInterval = 100
   score = 0
   cascadeActive = false
   boardCells = []
