@@ -1,6 +1,4 @@
 /*-------------------------------- Constants --------------------------------*/
-const baddieTypes = ['baddieA', 'baddieB', 'baddieC']
-const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 const edgeIdxValues = {
   top: [0, 16, 32, 48, 64, 80, 96, 112],
@@ -47,7 +45,7 @@ class Cell {
     }
   }
   calcIdxOfFillType() {
-    return baddieTypes.indexOf(this.fill) !== -1 ? baddieTypes.indexOf(this.fill) : pieceColors.indexOf(this.fill)
+    return currentTheme.baddieTypes.indexOf(this.fill) !== -1 ? currentTheme.baddieTypes.indexOf(this.fill) : currentTheme.pieceColors.indexOf(this.fill)
   }
 }
 
@@ -56,7 +54,11 @@ class Cell {
 /*---------------------------- Variables (state) ----------------------------*/
 let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive
 let boardCells = []
-
+let currentTheme = {
+  baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
+  baddieUrls: ["url('./assets/images/clyde.png')", "url('./assets/images/pinky.png')", "url('./assets/images/inky.png')"],
+  pieceColors: ['#db7800', '#e18695', 'cornflowerblue'],
+}
 
 /*------------------------ Cached Element References ------------------------*/
 const boardElement = document.querySelector('#board')
@@ -284,9 +286,9 @@ function lockInPlace() {
 }
 
 function generatePiece() {
-  let randIdx1 = Math.floor(Math.random() * pieceColors.length)
-  let randIdx2 = Math.floor(Math.random() * pieceColors.length)
-  return {color1: pieceColors[randIdx1], color2: pieceColors[randIdx2], color1CellIdx: 49, color2CellIdx: 65}
+  let randIdx1 = Math.floor(Math.random() * currentTheme.pieceColors.length)
+  let randIdx2 = Math.floor(Math.random() * currentTheme.pieceColors.length)
+  return {color1: currentTheme.pieceColors[randIdx1], color2: currentTheme.pieceColors[randIdx2], color1CellIdx: 49, color2CellIdx: 65}
 }
 
 function startNextPiece() {
@@ -318,32 +320,14 @@ function checkForCollision() {
 
 function renderBoard() {
   boardCellElements.forEach((cellEl, idx) => {
-    if (boardCells[idx].fill === 'baddieA') {
-      cellEl.style.backgroundColor = pieceColors[0]
-      cellEl.style.backgroundImage = "url('./assets/images/clyde.png')"
+    if (currentTheme.baddieTypes.includes(boardCells[idx].fill)){
+      let idxForStyling = currentTheme.baddieTypes.indexOf(boardCells[idx].fill)
+      cellEl.style.backgroundImage = currentTheme.baddieUrls[idxForStyling]
       cellEl.style.backgroundSize = "20px"
       cellEl.style.borderRadius = '6px'
-    }
-    if (boardCells[idx].fill === 'baddieB') {
-      cellEl.style.backgroundColor = pieceColors[1]
-      cellEl.style.backgroundImage = "url('./assets/images/pinky.png')"
-      cellEl.style.backgroundSize = "20px"
-      cellEl.style.borderRadius = '6px'
-    }
-    if (boardCells[idx].fill === 'baddieC') {
-      cellEl.style.backgroundColor = pieceColors[2]
-      cellEl.style.backgroundImage = "url('./assets/images/inky.png')"
-      cellEl.style.backgroundSize = "20px"
-      cellEl.style.borderRadius = '6px'
-    }
-    if (boardCells[idx].fill === pieceColors[0]) {
-      cellEl.style.backgroundColor = pieceColors[0]
-    }
-    if (boardCells[idx].fill === pieceColors[1]) {
-      cellEl.style.backgroundColor = pieceColors[1]
-    }
-    if (boardCells[idx].fill === pieceColors[2]) {
-      cellEl.style.backgroundColor = pieceColors[2]
+      cellEl.style.backgroundColor = currentTheme.pieceColors[idxForStyling]
+    } else {
+      cellEl.style.backgroundColor = currentTheme.pieceColors[currentTheme.pieceColors.indexOf(boardCells[idx].fill)]
     }
     if (!boardCells[idx].fill) {
       cellEl.style.backgroundColor = null
@@ -535,8 +519,8 @@ function addBaddies() {
     }
   }
   baddiesToAdd.forEach(baddieIdx => {
-    let baddieTypeIdx = Math.floor(Math.random() * baddieTypes.length)
-    boardCells[baddieIdx].fill = baddieTypes[baddieTypeIdx]
+    let baddieTypeIdx = Math.floor(Math.random() * currentTheme.baddieTypes.length)
+    boardCells[baddieIdx].fill = currentTheme.baddieTypes[baddieTypeIdx]
     boardCells[baddieIdx].locked = true
   })
 }
