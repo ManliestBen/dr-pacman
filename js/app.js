@@ -14,6 +14,8 @@ class Cell {
   }
   fill = null
   locked = false
+  linkedTo = null
+  borderRadiusLocation = null
   lookUp() {
     if (edgeIdxValues.top.includes(this.cellIdx)) return null
     return boardCells[this.cellIdx - 1]
@@ -186,6 +188,8 @@ function clearCells(cellsToClear) {
   cellsToClear.forEach(cell => {
     boardCells[cell].fill = null
     boardCells[cell].locked = false
+    boardCells[cell.linkedTo] = null
+    boardCells[cell].linkedTo = null
   })
 }
 
@@ -196,6 +200,8 @@ function calculatePoints(numCellsCleared) {
 function lockInPlace() {
   boardCells[currentPiece.color1CellIdx].locked = true
   boardCells[currentPiece.color2CellIdx].locked = true
+  boardCells[currentPiece.color2CellIdx].linkedTo = currentPiece.color1CellIdx
+  boardCells[currentPiece.color1CellIdx].linkedTo = currentPiece.color2CellIdx
 }
 
 function pieceFalls() {
@@ -248,16 +254,19 @@ function renderBoard() {
       cellEl.style.backgroundColor = pieceColors[0]
       cellEl.style.backgroundImage = "url('./assets/images/clyde.png')"
       cellEl.style.backgroundSize = "20px"
+      cellEl.style.borderRadius = '6px'
     }
     if (boardCells[idx].fill === 'baddieB') {
       cellEl.style.backgroundColor = pieceColors[1]
       cellEl.style.backgroundImage = "url('./assets/images/pinky.png')"
       cellEl.style.backgroundSize = "20px"
+      cellEl.style.borderRadius = '6px'
     }
     if (boardCells[idx].fill === 'baddieC') {
       cellEl.style.backgroundColor = pieceColors[2]
       cellEl.style.backgroundImage = "url('./assets/images/inky.png')"
       cellEl.style.backgroundSize = "20px"
+      cellEl.style.borderRadius = '6px'
     }
     if (boardCells[idx].fill === pieceColors[0]) {
       cellEl.style.backgroundColor = pieceColors[0]
