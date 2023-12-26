@@ -131,9 +131,6 @@ function gameTick() {
 }
 
 function handleCollision() {
-  // check for complete rows/columns
-  // if yes, clear and check for cascades
-  // if no
   if (boardCells[49].fill || boardCells[65].fill) {
     clearInterval(gameTickInterval)
     console.log('game over')
@@ -189,8 +186,7 @@ function clearCellsAndCalculatePoints() {
 function cascade() {
   let cascadePossible = false
   let singleCellsToCascade = []
-  let linkedHorizontalCellsToCascade = []
-  let linkedVerticalCellsToCascade = []
+  let linkedCellsToCascade = []
   boardCells.forEach(cell => {
     // If single cell can cascade
     if (!cell.locked && cell.fill && cell.lookDown() && !cell.lookDown().fill) {
@@ -213,7 +209,7 @@ function cascade() {
       let cellData = {}
       cellData.cellIdx = cell.cellIdx
       cellData.linkedTo= cell.linkedTo
-      linkedHorizontalCellsToCascade.push(cellData)
+      linkedCellsToCascade.push(cellData)
     }
     // If linked vertical pair can cascade
     if (cell.linkedTo && (cell.linkedTo === cell.cellIdx + 1 || cell.linkedTo === cell.cellIdx - 1) && cell.lookDown() && !cell.lookDown().fill ) {
@@ -221,27 +217,16 @@ function cascade() {
       let cellData = {}
       cellData.cellIdx = cell.cellIdx
       cellData.linkedTo= cell.linkedTo
-      linkedHorizontalCellsToCascade.push(cellData)
+      linkedCellsToCascade.push(cellData)
     }
   })
-  console.log(singleCellsToCascade, 'single')
-  console.log(linkedHorizontalCellsToCascade, 'linked')
-  let mixedCellsToCascade = [...singleCellsToCascade, ...linkedHorizontalCellsToCascade].sort((a, b) => {
+  let mixedCellsToCascade = [...singleCellsToCascade, ...linkedCellsToCascade].sort((a, b) => {
     return b.cellIdx - a.cellIdx
   })
-  console.log(mixedCellsToCascade)
   mixedCellsToCascade.forEach(cellObj => {
     slideSingleCellDown(cellObj.cellIdx, cellObj.linkedTo)
   })
   renderBoard()
-  // singleCellsToCascade.forEach(cellIdx => {
-  //   slideSingleCellDown(cellIdx)
-  //   renderBoard()
-  // })
-  // linkedHorizontalCellsToCascade.forEach(cellIdx => {
-  //   slideSingleCellDown(cellIdx)
-  //   renderBoard()
-  // })
   if (!cascadePossible) {
     if (getColumnMatchData().length || getRowMatchData().length) {
       setTimeout(()  => {
@@ -259,18 +244,6 @@ function cascade() {
     }, 300)
   }
 }
-
-// function slideLinkedCellDown(cellIdx) {
-//   let tempLinkedTo = boardCells[cellIdx].linkedTo
-//   boardCells[cellIdx + 1].linkedTo = tempLinkedTo
-//   boardCells[cellIdx].linkedTo = null
-//   let tempCellFill = boardCells[cellIdx].fill
-//   boardCells[cellIdx + 1].fill = tempCellFill
-//   boardCells[cellIdx].fill = null
-//   let tempCellClassName = boardCellElements[cellIdx].className
-//   boardCellElements[cellIdx + 1].className = tempCellClassName
-//   boardCellElements[cellIdx].className = 'cell'
-// }
 
 function slideSingleCellDown(cellIdx, linkedTo) {
   console.log(cellIdx, linkedTo)
