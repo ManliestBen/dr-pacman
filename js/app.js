@@ -184,11 +184,17 @@ function clearCellsAndCalculatePoints() {
 }
 
 function clearCells(cellsToClear) {
+  console.log(cellsToClear)
   cellsToClear.forEach(cell => {
     boardCells[cell].fill = null
     boardCells[cell].locked = false
-    boardCells[cell.linkedTo] = null
-    boardCells[cell].linkedTo = null
+    boardCellElements[cell].className = 'cell'
+    if (boardCells[cell].linkedTo) {
+      boardCells[boardCells[cell].linkedTo].locked = false
+      boardCellElements[boardCells[cell].linkedTo].className = 'cell fragment'
+      boardCells[boardCells[cell].linkedTo].linkedTo = null
+      boardCells[cell].linkedTo = null
+    }
   })
 }
 
@@ -288,6 +294,7 @@ function renderBoard() {
     if (!boardCells[idx].fill) {
       cellEl.style.backgroundColor = null
       cellEl.style.backgroundImage = null
+      cellEl.style.borderRadius = null
     }
   })
 }
