@@ -52,7 +52,7 @@ class Cell {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive
+let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive, highScores, playerName
 let boardCells = []
 let currentTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
@@ -88,6 +88,7 @@ init()
 
 
 function init() {
+  fetchHighScores()
   score = 0
   cascadeActive = false
   boardCells = []
@@ -98,6 +99,26 @@ function init() {
   nextPiece = generatePiece()
   startNextPiece()
   renderBoard()
+}
+
+function fetchHighScores() {
+  fetch('https://high-score-api.fly.dev/api/scores/?game=tbd')
+  .then(res => res.json())
+  .then(data => highScores = data)
+}
+
+function submitScore(playerName, newScore) {
+  fetch('https://high-score-api.fly.dev/api/scores/', {
+    method: 'POST',
+    body: JSON.stringify({
+      game: 'tbd',
+      player: playerName,
+      score: newScore
+    }),
+    headers: {'Content-Type': 'application/json'}
+  })
+  .then(res => res.json())
+  .then(data => highScores = data)
 }
 
 function getRowMatchData() {
