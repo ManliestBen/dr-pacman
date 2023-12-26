@@ -216,10 +216,13 @@ function cascade() {
       linkedHorizontalCellsToCascade.push(cellData)
     }
     // If linked vertical pair can cascade
-    // if (cell) {
-    //   cascadePossible = true
-    //   linkedVerticalCellsToCascade.push(cell.cellIdx, cell.linkedTo)
-    // }
+    if (cell.linkedTo && (cell.linkedTo === cell.cellIdx + 1 || cell.linkedTo === cell.cellIdx - 1) && cell.lookDown() && !cell.lookDown().fill ) {
+      cascadePossible = true
+      let cellData = {}
+      cellData.cellIdx = cell.cellIdx
+      cellData.linkedTo= cell.linkedTo
+      linkedHorizontalCellsToCascade.push(cellData)
+    }
   })
   console.log(singleCellsToCascade, 'single')
   console.log(linkedHorizontalCellsToCascade, 'linked')
@@ -229,8 +232,8 @@ function cascade() {
   console.log(mixedCellsToCascade)
   mixedCellsToCascade.forEach(cellObj => {
     slideSingleCellDown(cellObj.cellIdx, cellObj.linkedTo)
-    renderBoard()
   })
+  renderBoard()
   // singleCellsToCascade.forEach(cellIdx => {
   //   slideSingleCellDown(cellIdx)
   //   renderBoard()
