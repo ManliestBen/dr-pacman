@@ -15,7 +15,6 @@ class Cell {
   fill = null
   locked = false
   linkedTo = null
-  borderRadiusLocation = null
   lookUp() {
     if (edgeIdxValues.top.includes(this.cellIdx)) return null
     return boardCells[this.cellIdx - 1]
