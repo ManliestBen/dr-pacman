@@ -18,3 +18,23 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.right-border-radius {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.left-border-radius {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.top-border-radius {
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.bottom-border-radius {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}

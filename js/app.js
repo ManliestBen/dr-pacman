@@ -206,8 +206,14 @@ function lockInPlace() {
 function pieceFalls() {
   boardCells[currentPiece.color1CellIdx].fill = null
   boardCells[currentPiece.color2CellIdx].fill = null
+  let tempClass1 = boardCellElements[currentPiece.color1CellIdx].className
+  let tempClass2 = boardCellElements[currentPiece.color2CellIdx].className
+  boardCellElements[currentPiece.color2CellIdx].className = 'cell'
+  boardCellElements[currentPiece.color1CellIdx].className = 'cell'
   currentPiece.color1CellIdx += 1
   currentPiece.color2CellIdx += 1
+  boardCellElements[currentPiece.color1CellIdx].className = tempClass1
+  boardCellElements[currentPiece.color2CellIdx].className = tempClass2
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
 }
@@ -224,6 +230,9 @@ function startNextPiece() {
   currentPiece.orientation = 'horizontal1'
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+  boardCellElements[currentPiece.color1CellIdx].className = 'cell left-border-radius'
+  boardCellElements[currentPiece.color2CellIdx].className = 'cell right-border-radius'
+  renderBoard()
   clearInterval(gameTickInterval)
   gameTickInterval = setInterval(gameTick, 1000)
 }
@@ -319,31 +328,47 @@ function rotatePiece() {
     boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
   }
   if (currentPiece.orientation === 'horizontal1' && !boardCells[currentPiece.color1CellIdx].lookUp().locked) {
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell'
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell'
     boardCells[currentPiece.color2CellIdx].fill = null
     currentPiece.color2CellIdx = currentPiece.color1CellIdx - 1
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell bottom-border-radius'
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell top-border-radius'
     boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
     currentPiece.orientation = 'vertical1'
     renderBoard()
   } else if (currentPiece.orientation === 'vertical1' && !boardCells[currentPiece.color1CellIdx].lookRight().locked) {
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell'
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell'
     let idx1Placeholder = currentPiece.color1CellIdx
     boardCells[currentPiece.color2CellIdx].fill = null
     currentPiece.color2CellIdx = idx1Placeholder
     currentPiece.color1CellIdx = currentPiece.color2CellIdx + 16
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell right-border-radius'
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell left-border-radius'
     boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
     boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
     currentPiece.orientation = 'horizontal2'
     renderBoard()
   } else if (currentPiece.orientation === 'horizontal2' && !boardCells[currentPiece.color2CellIdx].lookUp().locked) {
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell'
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell'
     boardCells[currentPiece.color1CellIdx].fill = null
     currentPiece.color1CellIdx = currentPiece.color2CellIdx - 1
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell top-border-radius'
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell bottom-border-radius'
     boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
     currentPiece.orientation = 'vertical2'
     renderBoard()
   } else if (currentPiece.orientation === 'vertical2' && !boardCells[currentPiece.color2CellIdx].lookRight().locked) {
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell'
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell'
     let idx2Placeholder = currentPiece.color2CellIdx
     boardCells[currentPiece.color1CellIdx].fill = null
     currentPiece.color1CellIdx = idx2Placeholder
     currentPiece.color2CellIdx = currentPiece.color1CellIdx + 16
+    boardCellElements[currentPiece.color1CellIdx].className = 'cell left-border-radius'
+    boardCellElements[currentPiece.color2CellIdx].className = 'cell right-border-radius'
     boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
     boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
     currentPiece.orientation = 'horizontal1'
@@ -375,10 +400,16 @@ function movePieceLeft() {
   ) {
     return
   }
+  let tempClass1 = boardCellElements[currentPiece.color1CellIdx].className
+  let tempClass2 = boardCellElements[currentPiece.color2CellIdx].className
+  boardCellElements[currentPiece.color1CellIdx].className = 'cell'
+  boardCellElements[currentPiece.color2CellIdx].className = 'cell'
   boardCells[currentPiece.color1CellIdx].fill = null
   boardCells[currentPiece.color2CellIdx].fill = null
   currentPiece.color1CellIdx -= 16
   currentPiece.color2CellIdx -= 16
+  boardCellElements[currentPiece.color1CellIdx].className = tempClass1
+  boardCellElements[currentPiece.color2CellIdx].className = tempClass2
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
   renderBoard()
@@ -408,10 +439,16 @@ function movePieceRight() {
   ) {
     return
   }
+  let tempClass1 = boardCellElements[currentPiece.color1CellIdx].className
+  let tempClass2 = boardCellElements[currentPiece.color2CellIdx].className
+  boardCellElements[currentPiece.color1CellIdx].className = 'cell'
+  boardCellElements[currentPiece.color2CellIdx].className = 'cell'
   boardCells[currentPiece.color1CellIdx].fill = null
   boardCells[currentPiece.color2CellIdx].fill = null
   currentPiece.color1CellIdx += 16
   currentPiece.color2CellIdx += 16
+  boardCellElements[currentPiece.color1CellIdx].className = tempClass1
+  boardCellElements[currentPiece.color2CellIdx].className = tempClass2
   boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
   boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
   renderBoard()
@@ -440,13 +477,19 @@ function movePieceDown() {
     handleCollision()
     return
   }
-    boardCells[currentPiece.color1CellIdx].fill = null
-    boardCells[currentPiece.color2CellIdx].fill = null
-    currentPiece.color1CellIdx += 1
-    currentPiece.color2CellIdx += 1
-    boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
-    boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
-    renderBoard()
+  let tempClass1 = boardCellElements[currentPiece.color1CellIdx].className
+  let tempClass2 = boardCellElements[currentPiece.color2CellIdx].className
+  boardCellElements[currentPiece.color1CellIdx].className = 'cell'
+  boardCellElements[currentPiece.color2CellIdx].className = 'cell'
+  boardCells[currentPiece.color1CellIdx].fill = null
+  boardCells[currentPiece.color2CellIdx].fill = null
+  currentPiece.color1CellIdx += 1
+  currentPiece.color2CellIdx += 1
+  boardCellElements[currentPiece.color1CellIdx].className = tempClass1
+  boardCellElements[currentPiece.color2CellIdx].className = tempClass2
+  boardCells[currentPiece.color1CellIdx].fill = currentPiece.color1
+  boardCells[currentPiece.color2CellIdx].fill = currentPiece.color2
+  renderBoard()
 }
 
 function addBaddies() {
