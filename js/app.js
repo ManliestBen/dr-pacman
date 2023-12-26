@@ -54,7 +54,7 @@ const pieceColors = ['#db7800', '#e18695', 'cornflowerblue']
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive
+let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive, cascadeDelayInterval
 let boardCells = []
 
 
@@ -86,6 +86,7 @@ init()
 
 
 function init() {
+  cascadeDelayInterval = 100
   score = 0
   cascadeActive = false
   generateBoardCells()
@@ -139,7 +140,10 @@ function handleCollision() {
   } else {
     lockInPlace()
     clearCellsAndCalculatePoints()
-    startNextPiece()
+    clearInterval(gameTickInterval)
+    if (!cascadeActive) {
+      startNextPiece()
+    }
   }
 }
 
@@ -176,15 +180,53 @@ function clearCellsAndCalculatePoints() {
     clearCells(cellsToClear)
     renderBoard()
     cascadeActive = true
-    console.log('waiting 5 seconds')
     setTimeout(() => {
-      cascadeActive = false
-    }, 5000)
+      cascade()
+    }, 200)
   }
 }
 
+function cascade() {
+  let cascadePossible = false
+  let cellsToCascade = []
+  boardCells.forEach(cell => {
+    if (!cell.locked && cell.fill && cell.lookDown() && !cell.lookDown().fill) {
+      cascadePossible = true
+      cellsToCascade.push(cell.cellIdx)
+    }
+  })
+  cellsToCascade.forEach(cellIdx => {
+    slideCellDown(cellIdx)
+    renderBoard()
+  })
+  if (!cascadePossible) {
+    if (getColumnMatchData().length || getRowMatchData().length) {
+      setTimeout(()  => {
+        clearCellsAndCalculatePoints()
+      }, 100)
+    } else {
+      setTimeout(() => {
+        cascadeActive = false
+        startNextPiece()
+      }, 1000)
+    }
+  } else {
+    setTimeout(()=> {
+      cascade()
+    }, 100)
+  }
+}
+
+function slideCellDown(cellIdx) {
+  let tempCellFill = boardCells[cellIdx].fill
+  boardCells[cellIdx + 1].fill = tempCellFill
+  boardCells[cellIdx].fill = null
+  let tempCellClassName = boardCellElements[cellIdx].className
+  boardCellElements[cellIdx + 1].className = tempCellClassName
+  boardCellElements[cellIdx].className = 'cell'
+}
+
 function clearCells(cellsToClear) {
-  console.log(cellsToClear)
   cellsToClear.forEach(cell => {
     boardCells[cell].fill = null
     boardCells[cell].locked = false
@@ -245,17 +287,17 @@ function startNextPiece() {
 
 function checkForCollision() {
   if (currentPiece.orientation === 'vertical1') {
-    if (!boardCells[currentPiece.color1CellIdx].lookDown() || boardCells[currentPiece.color1CellIdx + 1].locked) {
+    if (!boardCells[currentPiece.color1CellIdx].lookDown() || boardCells[currentPiece.color1CellIdx + 1].fill) {
       console.log('collision')
       return true
     }
   } else if (currentPiece.orientation === 'vertical2') {
-    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].locked ) {
+    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].fill ) {
       console.log('collision')
       return true
     }
   } else {
-    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].locked || boardCells[currentPiece.color1CellIdx + 1].locked) {
+    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].fill || boardCells[currentPiece.color1CellIdx + 1].fill) {
       console.log('collisionaaa')
       return true
     }
@@ -324,7 +366,6 @@ function generateBoardCells() {
 
 
 function rotatePiece() {
-  console.log('rotatePiece invoked')
   // Address edge case for flipping a vertical piece on right edge of board
   if ((currentPiece.orientation === 'vertical1' || currentPiece.orientation === 'vertical2') && (currentPiece.color1CellIdx > 112)) {
     boardCells[currentPiece.color1CellIdx].fill = null
@@ -384,7 +425,6 @@ function rotatePiece() {
 }
 
 function movePieceLeft() {
-  console.log('movePieceLeft invoked')
   if (
     // If piece is horizontal and the spot to the left is locked or an edge
     (currentPiece.orientation === 'horizontal1' && 
@@ -423,7 +463,6 @@ function movePieceLeft() {
 }
 
 function movePieceRight() {
-  console.log('movePieceRight invoked')
   if (
     // If piece is horizontal and the spot to the right is locked or an edge
     (currentPiece.orientation === 'horizontal1' && 
@@ -462,23 +501,22 @@ function movePieceRight() {
 }
 
 function movePieceDown() {
-  console.log('movePieceDown invoked')
   if (
     // If piece is horizontal and the spot below is locked or an edge
     ((currentPiece.orientation === 'horizontal1' || currentPiece.orientation === 'horizontal2') && 
     (
       !boardCells[currentPiece.color1CellIdx].lookDown() ||
-      boardCells[currentPiece.color1CellIdx].lookDown().locked ||
-      boardCells[currentPiece.color2CellIdx].lookDown().locked
+      boardCells[currentPiece.color1CellIdx].lookDown().fill ||
+      boardCells[currentPiece.color2CellIdx].lookDown().fill
     )) ||
     // If piece is vertical and the spot below is locked or an edge
     (currentPiece.orientation === 'vertical1' && 
       (!boardCells[currentPiece.color1CellIdx].lookDown() ||
-      boardCells[currentPiece.color1CellIdx].lookDown().locked)
+      boardCells[currentPiece.color1CellIdx].lookDown().fill)
     ) ||
     (currentPiece.orientation === 'vertical2' && 
       (!boardCells[currentPiece.color2CellIdx].lookDown() ||
-      boardCells[currentPiece.color2CellIdx].lookDown().locked)
+      boardCells[currentPiece.color2CellIdx].lookDown().fill)
     ) 
   ) {
     handleCollision()
