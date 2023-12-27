@@ -65,7 +65,8 @@ let currentTheme = {
 const boardElement = document.querySelector('#board')
 const menuBtn = document.querySelector('#menu-button')
 const gameplayBtns = document.querySelector('.gameplay-buttons')
-const scoreDisplay = document.querySelector('#score-display')
+const scoreDisplayElement = document.querySelector('#score-display')
+const levelDisplayElement = document.querySelector('#level-display')
 
 
 /*----------------------------- Event Listeners -----------------------------*/
@@ -109,6 +110,29 @@ function init() {
   nextPiece = generatePiece()
   startNextPiece()
   renderBoard()
+}
+
+function startNewLevel(levelNum) {
+  level = levelNum
+  cascadeActive = false
+  boardCells = []
+  generateBoardCells()
+  generateBoardCellElements()
+  boardCellElements = document.querySelectorAll('.cell')
+  addBaddies()
+  nextPiece = generatePiece()
+  startNextPiece()
+  renderBoard()
+}
+
+function countRemainingBaddies() {
+  let baddiesLeft = 0
+  boardCells.forEach(cell => {
+    if (currentTheme.baddieTypes.includes(cell.fill)) {
+      baddiesLeft += 1
+    }
+  })
+  return baddiesLeft
 }
 
 function handleGameplayClick(evt) {
@@ -170,7 +194,7 @@ function getColumnMatchData() {
 
 function gameTick() {
   if (!cascadeActive) {
-    if(checkForCollision()) {
+    if (checkForCollision()) {
       handleCollision()
     } else {
       shiftPiece(1, 1)
@@ -283,10 +307,17 @@ function cascade() {
         clearCellsAndCalculatePoints()
       }, 100)
     } else {
-      setTimeout(() => {
-        cascadeActive = false
-        startNextPiece()
-      }, 1000)
+      if (!countRemainingBaddies()) {
+        // move to next level
+        clearInterval(gameTickInterval)
+        console.log('next level!')
+        startNewLevel(level + 1)
+      } else {
+        setTimeout(() => {
+          cascadeActive = false
+          startNextPiece()
+        }, 1000)
+      }
     }
   } else {
     setTimeout(()=> {
@@ -384,7 +415,8 @@ function renderBoard() {
       cellEl.style.borderRadius = null
     }
   })
-  scoreDisplay.textContent = `Score: ${score}`
+  scoreDisplayElement.textContent = `Score: ${score}`
+  levelDisplayElement.textContent = `Level: ${level}`
 }
 
 function generateBoardCellElements() {
