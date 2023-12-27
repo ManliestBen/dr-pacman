@@ -62,6 +62,11 @@ let currentTheme = {
 
 /*------------------------ Cached Element References ------------------------*/
 const boardElement = document.querySelector('#board')
+const resetBtn = document.querySelector('#reset-button')
+const leftBtn = document.querySelector('#left-button')
+const rightBtn = document.querySelector('#right-button')
+const downBtn = document.querySelector('#down-button')
+const rotateBtn = document.querySelector('#rotate-button')
 
 
 /*----------------------------- Event Listeners -----------------------------*/
@@ -81,6 +86,12 @@ document.addEventListener('keydown', (evt) => {
     }
   }
 })
+
+resetBtn.addEventListener('click', init)
+leftBtn.addEventListener('click', movePieceLeft)
+rightBtn.addEventListener('click', movePieceRight)
+downBtn.addEventListener('click', movePieceDown)
+rotateBtn.addEventListener('click', rotatePiece)
 
 
 /*-------------------------------- Functions --------------------------------*/
@@ -344,7 +355,7 @@ function renderBoard() {
     if (currentTheme.baddieTypes.includes(boardCells[idx].fill)){
       let idxForStyling = currentTheme.baddieTypes.indexOf(boardCells[idx].fill)
       cellEl.style.backgroundImage = currentTheme.baddieUrls[idxForStyling]
-      cellEl.style.backgroundSize = "20px"
+      cellEl.style.backgroundSize = "3.5vh"
       cellEl.style.borderRadius = '6px'
       cellEl.style.backgroundColor = currentTheme.pieceColors[idxForStyling]
     } else {

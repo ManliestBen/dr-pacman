@@ -2,6 +2,7 @@ body {
   height: 100vh;
   background-color: rgb(91, 78, 78);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -11,8 +12,8 @@ body {
 }
 
 .cell {
-  height: 20px;
-  width: 20px;
+  height: 3.5vh;
+  width: 3.5vh;
   border: 1px solid black;
   display: flex;
   align-items: center;
@@ -41,4 +42,36 @@ body {
 
 .fragment {
   border-radius: 6px;
+}
+
+.gameplay-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 20px;
+  text-align: center;
+  padding: 10px;
+  width: 70px;
+  height: 70px;
+}
+
+.center-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#reset-button {
+  font-size: 20px;
+  height: 50px;
+  width: 90px;
 }
