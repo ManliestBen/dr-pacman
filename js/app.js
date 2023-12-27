@@ -52,7 +52,8 @@ class Cell {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements, gameTickInterval, score, cascadeActive, highScores, playerName
+let currentPiece, nextPiece, boardCellElements, gameTickInterval
+let score, cascadeActive, highScores, playerName, gameIsPaused, level
 let boardCells = []
 let currentTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
@@ -62,16 +63,14 @@ let currentTheme = {
 
 /*------------------------ Cached Element References ------------------------*/
 const boardElement = document.querySelector('#board')
-const resetBtn = document.querySelector('#reset-button')
-const leftBtn = document.querySelector('#left-button')
-const rightBtn = document.querySelector('#right-button')
-const downBtn = document.querySelector('#down-button')
-const rotateBtn = document.querySelector('#rotate-button')
+const menuBtn = document.querySelector('#menu-button')
+const gameplayBtns = document.querySelector('.gameplay-buttons')
+const scoreDisplay = document.querySelector('#score-display')
 
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (evt) => {
-  if (!cascadeActive) {
+  if (!cascadeActive && gameTickInterval) {
     if (evt.key === 's') {
       movePieceDown()
     }
@@ -87,11 +86,10 @@ document.addEventListener('keydown', (evt) => {
   }
 })
 
-resetBtn.addEventListener('click', init)
-leftBtn.addEventListener('click', movePieceLeft)
-rightBtn.addEventListener('click', movePieceRight)
-downBtn.addEventListener('click', movePieceDown)
-rotateBtn.addEventListener('click', rotatePiece)
+gameplayBtns.addEventListener('click', handleGameplayClick)
+
+menuBtn.addEventListener('click', init)
+
 
 
 /*-------------------------------- Functions --------------------------------*/
@@ -100,6 +98,7 @@ init()
 
 function init() {
   fetchHighScores()
+  level = 1
   score = 0
   cascadeActive = false
   boardCells = []
@@ -110,6 +109,23 @@ function init() {
   nextPiece = generatePiece()
   startNextPiece()
   renderBoard()
+}
+
+function handleGameplayClick(evt) {
+  if (gameTickInterval) {
+    if (evt.target.id === 'left-button') {
+      movePieceLeft()
+    }
+    if (evt.target.id === 'right-button') {
+      movePieceRight()
+    }
+    if (evt.target.id === 'down-button') {
+      movePieceDown()
+    }
+    if (evt.target.id === 'rotate-button') {
+      rotatePiece()
+    }
+  }
 }
 
 function fetchHighScores() {
@@ -166,6 +182,7 @@ function gameTick() {
 function handleCollision() {
   if ((boardCells[49].fill || boardCells[65].fill) && (!getColumnMatchData().length && !getRowMatchData().length)) {
     clearInterval(gameTickInterval)
+    gameTickInterval = null
     console.log('game over')
   } else {
     lockInPlace()
@@ -307,7 +324,7 @@ function clearCells(cellsToClear) {
 }
 
 function calculatePoints(numCellsCleared) {
-  return 2 ^ numCellsCleared
+  return (2 ^ numCellsCleared) * level
 }
 
 function lockInPlace() {
@@ -367,6 +384,7 @@ function renderBoard() {
       cellEl.style.borderRadius = null
     }
   })
+  scoreDisplay.textContent = `Score: ${score}`
 }
 
 function generateBoardCellElements() {
@@ -542,7 +560,7 @@ function movePieceDown() {
 
 function addBaddies() {
   let baddiesToAdd = []
-  while (baddiesToAdd.length < 4) {
+  while (baddiesToAdd.length < level * 4) {
     let baddieXCoord = Math.ceil(Math.random() * 8)
     let baddieYCoord = Math.ceil(Math.random() * 10)
     let baddieIdx = 16 * baddieXCoord - baddieYCoord

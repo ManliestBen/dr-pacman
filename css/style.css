@@ -5,6 +5,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: 0px;
 }
 
 #board {
@@ -56,11 +57,12 @@ button {
   align-items: center;
   justify-content: center;
   font-size: 40px;
-  margin: 20px;
+  margin: 15px;
   text-align: center;
   padding: 10px;
-  width: 70px;
+  width: 80px;
   height: 70px;
+  border: none;
 }
 
 .center-buttons {
@@ -70,8 +72,49 @@ button {
   justify-content: center;
 }
 
-#reset-button {
-  font-size: 20px;
-  height: 50px;
+#menu-button {
+  font-size: 15px;
+  height: 30px;
   width: 90px;
+}
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.level-info {
+  width: 30vh;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  font-size: 2.5vh;
+  padding: 0 10px;
+}
+
+#left-button {
+  background: url('../assets/images/arrow.png');
+  background-size: 70px;
+  background-repeat: no-repeat;
+  transform: rotate(180deg);
+}
+#right-button {
+  background: url('../assets/images/arrow.png');
+  background-repeat: no-repeat;
+  background-size: 70px;
+}
+#down-button {
+  background: url('../assets/images/arrow.png');
+  background-size: 70px;
+  background-repeat: no-repeat;
+  transform: rotate(90deg);
+}
+#rotate-button {
+  background: url('../assets/images/rotato.png');
+  background-size: 70px;
+  background-repeat: no-repeat;
+  transform: rotate(180deg);
 }
