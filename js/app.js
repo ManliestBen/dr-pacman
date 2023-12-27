@@ -404,7 +404,7 @@ function renderBoard() {
       let idxForStyling = currentTheme.baddieTypes.indexOf(boardCells[idx].fill)
       cellEl.style.backgroundImage = currentTheme.baddieUrls[idxForStyling]
       cellEl.style.backgroundSize = "3.5vh"
-      cellEl.style.borderRadius = '6px'
+      cellEl.style.borderRadius = '10px'
       cellEl.style.backgroundColor = currentTheme.pieceColors[idxForStyling]
     } else {
       cellEl.style.backgroundColor = currentTheme.pieceColors[currentTheme.pieceColors.indexOf(boardCells[idx].fill)]
