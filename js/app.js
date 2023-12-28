@@ -228,7 +228,7 @@ async function renderHighScoresList() {
   highScores = data
   scoresContainerElement.innerHTML = ''
   const scoreHeaderElement = document.createElement('div')
-  scoreHeaderElement.className = 'score-row'
+  scoreHeaderElement.className = 'score-row header'
   const nameHeader = document.createElement('p')
   const scoreHeader = document.createElement('p')
   const dateHeader = document.createElement('p')

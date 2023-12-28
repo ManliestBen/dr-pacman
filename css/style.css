@@ -188,3 +188,8 @@ label {
   width: 40%;
   text-align: end;
 }
+
+.header > p {
+  font-weight: bold;
+  text-decoration: underline;
+}
