@@ -75,7 +75,10 @@ const volumeSlider = document.querySelector('#volume-control')
 const volumeLabel = document.querySelector('#volume-label')
 const muteBtn = document.querySelector('#mute-button')
 const resetBtn = document.querySelector('#reset-button')
-const highScoresBtn = document.querySelector('#high-scores-button')
+const openHighScoresBtn = document.querySelector('#high-scores-button')
+const closeHighScoresBtn = document.querySelector('#close-high-scores-button')
+const highScoresElement = document.querySelector('#high-scores-list')
+const scoresContainerElement = document.querySelector('#scores-container')
 
 
 /*----------------------------- Event Listeners -----------------------------*/
@@ -103,19 +106,22 @@ resumeBtn.addEventListener('click', handleClickMenuOrResume)
 volumeSlider.addEventListener('change', adjustVolume)
 muteBtn.addEventListener('click', toggleAudio)
 resetBtn.addEventListener('click', init)
-highScoresBtn.addEventListener('click', handleOpenCloseHighScores)
+openHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
+closeHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 
 /*-------------------------------- Functions --------------------------------*/
 init()
 
 
-function init() {
+async function init() {
   toggleMenu()
+  highScoresElement.style.display = 'none'
+  if (boardElement.style.display === 'none') toggleBoard()
   volumeLabel.textContent = `Volume: ${currentVolume}%`
-  fetchHighScores()
   level = 1
   score = 0
   startNewLevel(level)
+  highScores = await fetchHighScores()
 }
 
 function adjustVolume(evt) {
@@ -144,7 +150,8 @@ function handleOpenCloseHighScores() {
 }
 
 function toggleHighScoreList() {
-  // high score list display functionality here
+  highScoresElement.style.display = !highScoresElement.style.display ? 'none' : ''
+  renderHighScoresList()
 }
 
 function handleClickMenuOrResume() {
@@ -153,15 +160,15 @@ function handleClickMenuOrResume() {
 }
 
 function toggleMenu() {
-  menuElement.style.display = menuElement.style.display === '' ? 'none' : ''
+  menuElement.style.display = !menuElement.style.display ? 'none' : ''
 }
 
 function toggleBoard() {
-  gameIsPaused = gameIsPaused === false ? true : false
-  menuBtn.style.display = menuBtn.style.display === '' ? 'none' : ''
-  boardElement.style.display = boardElement.style.display === '' ? 'none' : ''
-  gameplayBtns.style.display = gameplayBtns.style.display === '' ? 'none' : ''
-  levelInfoElement.style.display = levelInfoElement.style.display === '' ? 'none' : ''
+  gameIsPaused = !gameIsPaused ? true : false
+  menuBtn.style.display = !menuBtn.style.display ? 'none' : ''
+  boardElement.style.display = !boardElement.style.display ? 'none' : ''
+  gameplayBtns.style.display = !gameplayBtns.style.display ? 'none' : ''
+  levelInfoElement.style.display = !levelInfoElement.style.display ? 'none' : ''
 }
 
 
@@ -206,10 +213,48 @@ function handleGameplayClick(evt) {
   }
 }
 
-function fetchHighScores() {
-  fetch('https://high-score-api.fly.dev/api/scores/?game=tbd')
+async function fetchHighScores() {
+  return fetch('https://high-score-api.fly.dev/api/scores/?game=tbd')
   .then(res => res.json())
-  .then(data => highScores = data)
+}
+
+async function renderHighScoresList() {
+  scoresContainerElement.innerHTML = ''
+  const loadingMessageElement = document.createElement('div')
+  loadingMessageElement.className = 'loading-message'
+  loadingMessageElement.textContent = 'Loading... Please wait!!!'
+  scoresContainerElement.appendChild(loadingMessageElement)
+  const data = await fetchHighScores()
+  highScores = data
+  scoresContainerElement.innerHTML = ''
+  const scoreHeaderElement = document.createElement('div')
+  scoreHeaderElement.className = 'score-row'
+  const nameHeader = document.createElement('p')
+  const scoreHeader = document.createElement('p')
+  const dateHeader = document.createElement('p')
+  nameHeader.textContent = 'Name'
+  scoreHeader.textContent = 'Score'
+  dateHeader.textContent = 'Earned On'
+  scoreHeaderElement.appendChild(nameHeader)
+  scoreHeaderElement.appendChild(scoreHeader)
+  scoreHeaderElement.appendChild(dateHeader)
+  scoresContainerElement.appendChild(scoreHeaderElement)
+  for (let i = 0; i <= 9; i++) {
+    if (!highScores[i]) break
+    const newScoreElement = document.createElement('div')
+    newScoreElement.className = 'score-row'
+    const playerNameElement = document.createElement('p')
+    const playerScoreElement = document.createElement('p')
+    const dateEarnedElement = document.createElement('p')
+    playerNameElement.textContent = `${i + 1}) ${highScores[i].player}`
+    playerScoreElement.textContent = highScores[i].score
+    let date = new Date(highScores[i].createdAt)
+    dateEarnedElement.textContent = date.toLocaleDateString()
+    newScoreElement.appendChild(playerNameElement)
+    newScoreElement.appendChild(playerScoreElement)
+    newScoreElement.appendChild(dateEarnedElement)
+    scoresContainerElement.appendChild(newScoreElement)
+  }
 }
 
 function submitScore(playerName, newScore) {
