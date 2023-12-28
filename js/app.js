@@ -79,7 +79,11 @@ const openHighScoresBtn = document.querySelector('#high-scores-button')
 const closeHighScoresBtn = document.querySelector('#close-high-scores-button')
 const highScoresElement = document.querySelector('#high-scores-list')
 const scoresContainerElement = document.querySelector('#scores-container')
-
+const messageDisplayElement = document.querySelector('#message-display')
+const messageElement = document.querySelector('#message')
+const nameInput = document.querySelector('#player-name')
+const messageBtn1 = document.querySelector('#message-button-1')
+const messageBtn2 = document.querySelector('#message-button-2')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (evt) => {
@@ -108,6 +112,7 @@ muteBtn.addEventListener('click', toggleAudio)
 resetBtn.addEventListener('click', init)
 openHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 closeHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
+messageBtn1.addEventListener('click', handleClickMessageButton1)
 
 /*-------------------------------- Functions --------------------------------*/
 init()
@@ -115,12 +120,13 @@ init()
 
 async function init() {
   toggleMenu()
-  highScoresElement.style.display = 'none'
-  if (boardElement.style.display === 'none') toggleBoard()
-  volumeLabel.textContent = `Volume: ${currentVolume}%`
+  gameIsPaused = true
   level = 1
+  highScoresElement.style.display = 'none'
+  toggleBoard()
+  volumeLabel.textContent = `Volume: ${currentVolume}%`
   score = 0
-  startNewLevel(level)
+  setMessageDisplay('next level')
   highScores = await fetchHighScores()
 }
 
@@ -142,6 +148,29 @@ function toggleAudio() {
   }
   volumeLabel.textContent = `Volume: ${currentVolume}%`
   volumeSlider.value = currentVolume
+}
+
+function handleClickMessageButton1() {
+  if (messageBtn1.textContent === 'Submit Score') {
+    // submit score
+  } else {
+    setMessageDisplay('hide')
+    toggleBoard()
+    startNewLevel(level)
+  }
+}
+
+function setMessageDisplay(action) {
+  if (action === 'hide') messageDisplayElement.style.display = 'none'
+  if (action === 'next level') {
+    messageDisplayElement.style.display = ''
+    messageBtn1.textContent = `Start Level ${level}`
+    messageBtn2.style.display = 'none'
+    nameInput.style.display = 'none'
+  }
+  if (action === 'game over') {
+    messageDisplayElement.style.display = ''
+  }
 }
 
 function handleOpenCloseHighScores() {

@@ -193,3 +193,16 @@ label {
   font-weight: bold;
   text-decoration: underline;
 }
+
+#message-display > button, input {
+  font-size: 40px;
+  width: 100%;
+}
+
+#message-display {
+  width: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
