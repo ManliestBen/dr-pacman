@@ -1,6 +1,6 @@
 body {
   height: 100vh;
-  background-color: rgb(91, 78, 78);
+  background-color: rgb(90, 90, 90);
   /* background-color: black; */
   display: flex;
   flex-direction: column;
@@ -118,4 +118,39 @@ button {
   background-size: 70px;
   background-repeat: no-repeat;
   transform: rotate(180deg);
+}
+
+#menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#menu > button {
+  width: 100%;
+}
+
+#music-buttons, #theme-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#music-buttons > button, #theme-buttons > button {
+  font-size: 22px;
+}
+
+#volume-control {
+  width: 150px;
+}
+
+label {
+  font-size: 25px;
+}
+
+#volume-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
 }

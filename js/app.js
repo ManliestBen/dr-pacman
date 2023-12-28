@@ -54,6 +54,7 @@ class Cell {
 /*---------------------------- Variables (state) ----------------------------*/
 let currentPiece, nextPiece, boardCellElements, gameTickInterval
 let score, cascadeActive, highScores, playerName, gameIsPaused, level
+let currentVolume = 50, previousVolume = 50, audioIsMuted = false
 let boardCells = []
 let currentTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
@@ -63,10 +64,18 @@ let currentTheme = {
 
 /*------------------------ Cached Element References ------------------------*/
 const boardElement = document.querySelector('#board')
+const menuElement = document.querySelector('#menu')
 const menuBtn = document.querySelector('#menu-button')
+const resumeBtn = document.querySelector('#resume-button')
 const gameplayBtns = document.querySelector('.gameplay-buttons')
 const scoreDisplayElement = document.querySelector('#score-display')
 const levelDisplayElement = document.querySelector('#level-display')
+const levelInfoElement = document.querySelector('.level-info')
+const volumeSlider = document.querySelector('#volume-control')
+const volumeLabel = document.querySelector('#volume-label')
+const muteBtn = document.querySelector('#mute-button')
+const resetBtn = document.querySelector('#reset-button')
+const highScoresBtn = document.querySelector('#high-scores-button')
 
 
 /*----------------------------- Event Listeners -----------------------------*/
@@ -89,30 +98,75 @@ document.addEventListener('keydown', (evt) => {
 
 gameplayBtns.addEventListener('click', handleGameplayClick)
 
-menuBtn.addEventListener('click', init)
-
-
+menuBtn.addEventListener('click', handleClickMenuOrResume)
+resumeBtn.addEventListener('click', handleClickMenuOrResume)
+volumeSlider.addEventListener('change', adjustVolume)
+muteBtn.addEventListener('click', toggleAudio)
+resetBtn.addEventListener('click', init)
+highScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 
 /*-------------------------------- Functions --------------------------------*/
 init()
 
 
 function init() {
+  toggleMenu()
+  volumeLabel.textContent = `Volume: ${currentVolume}%`
   fetchHighScores()
   level = 1
   score = 0
-  cascadeActive = false
-  boardCells = []
-  generateBoardCells()
-  generateBoardCellElements()
-  boardCellElements = document.querySelectorAll('.cell')
-  addBaddies()
-  nextPiece = generatePiece()
-  startNextPiece()
-  renderBoard()
+  startNewLevel(level)
 }
 
+function adjustVolume(evt) {
+  volumeLabel.textContent = `Volume: ${evt.target.value}%`
+  currentVolume = parseInt(evt.target.value)
+}
+
+function toggleAudio() {
+  if (!audioIsMuted) {
+    previousVolume = currentVolume
+    currentVolume = 0
+    audioIsMuted = true
+    muteBtn.textContent = 'Unmute Audio'
+  } else {
+    audioIsMuted = false
+    currentVolume = previousVolume
+    muteBtn.textContent = 'Mute Audio'
+  }
+  volumeLabel.textContent = `Volume: ${currentVolume}%`
+  volumeSlider.value = currentVolume
+}
+
+function handleOpenCloseHighScores() {
+  toggleMenu()
+  toggleHighScoreList()
+}
+
+function toggleHighScoreList() {
+  // high score list display functionality here
+}
+
+function handleClickMenuOrResume() {
+  toggleBoard()
+  toggleMenu()
+}
+
+function toggleMenu() {
+  menuElement.style.display = menuElement.style.display === '' ? 'none' : ''
+}
+
+function toggleBoard() {
+  gameIsPaused = gameIsPaused === false ? true : false
+  menuBtn.style.display = menuBtn.style.display === '' ? 'none' : ''
+  boardElement.style.display = boardElement.style.display === '' ? 'none' : ''
+  gameplayBtns.style.display = gameplayBtns.style.display === '' ? 'none' : ''
+  levelInfoElement.style.display = levelInfoElement.style.display === '' ? 'none' : ''
+}
+
+
 function startNewLevel(levelNum) {
+  gameIsPaused = false
   level = levelNum
   cascadeActive = false
   boardCells = []
@@ -193,7 +247,7 @@ function getColumnMatchData() {
 }
 
 function gameTick() {
-  if (!cascadeActive) {
+  if (!cascadeActive && !gameIsPaused) {
     if (checkForCollision()) {
       handleCollision()
     } else {
