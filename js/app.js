@@ -113,17 +113,19 @@ resetBtn.addEventListener('click', init)
 openHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 closeHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 messageBtn1.addEventListener('click', handleClickMessageButton1)
+messageBtn2.addEventListener('click', handleClickMessageButton2)
 
 /*-------------------------------- Functions --------------------------------*/
 init()
 
 
 async function init() {
-  toggleMenu()
+  if (!menuElement.style.display) toggleMenu()
+  if (!messageElement.style.display) messageElement.style.display = 'none'
   gameIsPaused = true
   level = 1
   highScoresElement.style.display = 'none'
-  toggleBoard()
+  if (!boardElement.style.display) toggleBoard()
   volumeLabel.textContent = `Volume: ${currentVolume}%`
   score = 0
   setMessageDisplay('next level')
@@ -152,23 +154,41 @@ function toggleAudio() {
 
 function handleClickMessageButton1() {
   if (messageBtn1.textContent === 'Submit Score') {
-    // submit score
+    if (nameInput.value.length >= 1) {
+      submitScore(nameInput.value, score)
+    } else {
+      nameInput.focus()
+    }
   } else {
     setMessageDisplay('hide')
-    toggleBoard()
+    if(boardElement.style.display) toggleBoard()
     startNewLevel(level)
   }
 }
 
+function handleClickMessageButton2() {
+  if(messageBtn2.textContent === 'Play Again') {
+    messageElement.textContent = ''
+    init()
+  }
+}
+
 function setMessageDisplay(action) {
+  nameInput.style.display = 'none'
   if (action === 'hide') messageDisplayElement.style.display = 'none'
   if (action === 'next level') {
     messageDisplayElement.style.display = ''
     messageBtn1.textContent = `Start Level ${level}`
     messageBtn2.style.display = 'none'
-    nameInput.style.display = 'none'
   }
   if (action === 'game over') {
+    toggleBoard()
+    messageBtn2.style.display = ''
+    nameInput.style.display = ''
+    messageElement.textContent = 'Game over!'
+    messageBtn1.textContent = `Submit Score`
+    messageBtn2.textContent = 'Play Again'
+    gameplayBtns.style.display = 'none'
     messageDisplayElement.style.display = ''
   }
 }
@@ -178,9 +198,9 @@ function handleOpenCloseHighScores() {
   toggleHighScoreList()
 }
 
-function toggleHighScoreList() {
+function toggleHighScoreList(optionalScoreData) {
   highScoresElement.style.display = !highScoresElement.style.display ? 'none' : ''
-  renderHighScoresList()
+  renderHighScoresList(optionalScoreData)
 }
 
 function handleClickMenuOrResume() {
@@ -202,6 +222,7 @@ function toggleBoard() {
 
 
 function startNewLevel(levelNum) {
+  gameplayBtns.style.display = ''
   gameIsPaused = false
   level = levelNum
   cascadeActive = false
@@ -247,7 +268,7 @@ async function fetchHighScores() {
   .then(res => res.json())
 }
 
-async function renderHighScoresList() {
+async function renderHighScoresList(optionalScoreData) {
   scoresContainerElement.innerHTML = ''
   const loadingMessageElement = document.createElement('div')
   loadingMessageElement.className = 'loading-message'
@@ -261,20 +282,45 @@ async function renderHighScoresList() {
   const nameHeader = document.createElement('p')
   const scoreHeader = document.createElement('p')
   const dateHeader = document.createElement('p')
-  nameHeader.textContent = 'Name'
+  nameHeader.textContent = 'Initials'
   scoreHeader.textContent = 'Score'
   dateHeader.textContent = 'Earned On'
   scoreHeaderElement.appendChild(nameHeader)
   scoreHeaderElement.appendChild(scoreHeader)
   scoreHeaderElement.appendChild(dateHeader)
   scoresContainerElement.appendChild(scoreHeaderElement)
+  let scoreInTop10 = false
   for (let i = 0; i <= 9; i++) {
     if (!highScores[i]) break
+    if (optionalScoreData && 
+      optionalScoreData.player === highScores[i].player && 
+      optionalScoreData.score === highScores[i].score
+    ) {
+      scoreInTop10 = true
+    }
     const newScoreElement = document.createElement('div')
     newScoreElement.className = 'score-row'
     const playerNameElement = document.createElement('p')
     const playerScoreElement = document.createElement('p')
     const dateEarnedElement = document.createElement('p')
+    playerNameElement.textContent = `${i + 1}) ${highScores[i].player}`
+    playerScoreElement.textContent = highScores[i].score
+    let date = new Date(highScores[i].createdAt)
+    dateEarnedElement.textContent = date.toLocaleDateString()
+    newScoreElement.appendChild(playerNameElement)
+    newScoreElement.appendChild(playerScoreElement)
+    newScoreElement.appendChild(dateEarnedElement)
+    scoresContainerElement.appendChild(newScoreElement)
+  }
+  if (!scoreInTop10 && optionalScoreData) {
+    const newScoreElement = document.createElement('div')
+    newScoreElement.className = 'score-row'
+    const playerNameElement = document.createElement('p')
+    const playerScoreElement = document.createElement('p')
+    const dateEarnedElement = document.createElement('p')
+    let i = highScores.findIndex(scoreObj => {
+      return scoreObj.score === optionalScoreData.score && scoreObj.player === optionalScoreData.player
+    })
     playerNameElement.textContent = `${i + 1}) ${highScores[i].player}`
     playerScoreElement.textContent = highScores[i].score
     let date = new Date(highScores[i].createdAt)
@@ -297,7 +343,11 @@ function submitScore(playerName, newScore) {
     headers: {'Content-Type': 'application/json'}
   })
   .then(res => res.json())
-  .then(data => highScores = data)
+  .then(data => {
+    highScores = data
+    setMessageDisplay('hide')
+    toggleHighScoreList({player: playerName, score: newScore})
+  })
 }
 
 function getRowMatchData() {
@@ -335,7 +385,7 @@ function handleCollision() {
   if ((boardCells[49].fill || boardCells[65].fill) && (!getColumnMatchData().length && !getRowMatchData().length)) {
     clearInterval(gameTickInterval)
     gameTickInterval = null
-    console.log('game over')
+    setMessageDisplay('game over')
   } else {
     lockInPlace()
     clearCellsAndCalculatePoints()
@@ -439,7 +489,9 @@ function cascade() {
         // move to next level
         clearInterval(gameTickInterval)
         console.log('next level!')
-        startNewLevel(level + 1)
+        level += 1
+        gameplayBtns.style.display = 'none'
+        setMessageDisplay('next level')
       } else {
         setTimeout(() => {
           cascadeActive = false
