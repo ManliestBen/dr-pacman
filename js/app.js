@@ -502,7 +502,7 @@ function cascade() {
   } else {
     setTimeout(()=> {
       cascade()
-    }, 300)
+    }, 150)
   }
 }
 
@@ -559,7 +559,7 @@ function startNextPiece() {
   applyBorderRadius('left', 'right')
   renderBoard()
   clearInterval(gameTickInterval)
-  gameTickInterval = setInterval(gameTick, 1000)
+  gameTickInterval = setInterval(gameTick, 500)
 }
 
 function checkForCollision() {
