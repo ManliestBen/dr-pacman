@@ -1,5 +1,7 @@
 /*-------------------------------- Constants --------------------------------*/
 
+import { marioTheme, pacmanTheme } from "./themes.js"
+
 const edgeIdxValues = {
   top: [0, 16, 32, 48, 64, 80, 96, 112],
   right: [112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127],
@@ -31,21 +33,21 @@ class Cell {
     return boardCells[this.cellIdx + 16]
   }
   calcNumMatchesRow() {
-    if (this.fill && this.calcIdxOfFillType() === this.lookRight()?.calcIdxOfFillType()){
+    if (this.fill !== null && this.calcIdxOfFillType() === this.lookRight()?.calcIdxOfFillType()){
       return 1 + this.lookRight().calcNumMatchesRow()
     } else {
       return 1
     }
   }
   calcNumMatchesColumn(){
-    if (this.fill && this.calcIdxOfFillType() === this.lookUp()?.calcIdxOfFillType()){
+    if (this.fill !== null && this.calcIdxOfFillType() === this.lookUp()?.calcIdxOfFillType()){
       return 1 + this.lookUp().calcNumMatchesColumn()
     } else {
       return 1
     }
   }
   calcIdxOfFillType() {
-    return currentTheme.baddieTypes.indexOf(this.fill) !== -1 ? currentTheme.baddieTypes.indexOf(this.fill) : currentTheme.pieceColors.indexOf(this.fill)
+    return currentTheme.baddieTypes.indexOf(this.fill) !== -1 ? currentTheme.baddieTypes.indexOf(this.fill) : this.fill
   }
 }
 
@@ -56,11 +58,7 @@ let currentPiece, nextPiece, boardCellElements, gameTickInterval
 let score, cascadeActive, highScores, playerName, gameIsPaused, level
 let currentVolume = 50, previousVolume = 50, audioIsMuted = false
 let boardCells = []
-let currentTheme = {
-  baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
-  baddieUrls: ["url('./assets/images/clyde.png')", "url('./assets/images/pinky.png')", "url('./assets/images/inky.png')"],
-  pieceColors: ['#db7800', '#e18695', 'cornflowerblue'],
-}
+let currentTheme = {}
 
 /*------------------------ Cached Element References ------------------------*/
 const boardElement = document.querySelector('#board')
@@ -84,10 +82,12 @@ const messageElement = document.querySelector('#message')
 const nameInput = document.querySelector('#player-name')
 const messageBtn1 = document.querySelector('#message-button-1')
 const messageBtn2 = document.querySelector('#message-button-2')
+const pacmanThemeBtn = document.querySelector('#pacman-theme-button')
+const marioThemeBtn = document.querySelector('#mario-theme-button')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (evt) => {
-  if (!cascadeActive && gameTickInterval) {
+  if (!cascadeActive && gameTickInterval && !gameIsPaused) {
     if (evt.key === 's') {
       movePieceDown()
     }
@@ -114,8 +114,12 @@ openHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 closeHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 messageBtn1.addEventListener('click', handleClickMessageButton1)
 messageBtn2.addEventListener('click', handleClickMessageButton2)
+pacmanThemeBtn.addEventListener('click', () => changeTheme('pacman'))
+marioThemeBtn.addEventListener('click', () => changeTheme('mario'))
 
 /*-------------------------------- Functions --------------------------------*/
+
+currentTheme = pacmanTheme
 init()
 
 
@@ -130,6 +134,21 @@ async function init() {
   score = 0
   setMessageDisplay('next level')
   highScores = await fetchHighScores()
+}
+
+function changeTheme(newTheme) {
+  
+  pacmanThemeBtn.className = ''
+  marioThemeBtn.className = ''
+  if (newTheme === 'pacman') {
+    pacmanThemeBtn.className = 'rainbow-border'
+    currentTheme = pacmanTheme
+    renderBoard()
+  } else if (newTheme === 'mario') {
+    marioThemeBtn.className = 'rainbow-border'
+    currentTheme = marioTheme
+    renderBoard()
+  }
 }
 
 function adjustVolume(evt) {
@@ -247,7 +266,7 @@ function countRemainingBaddies() {
 }
 
 function handleGameplayClick(evt) {
-  if (gameTickInterval) {
+  if (gameTickInterval && !gameIsPaused) {
     if (evt.target.id === 'left-button') {
       movePieceLeft()
     }
@@ -441,7 +460,7 @@ function cascade() {
   let linkedCellsToCascade = []
   boardCells.forEach(cell => {
     // If single cell can cascade
-    if (!cell.locked && cell.fill && cell.lookDown() && !cell.lookDown().fill) {
+    if (!cell.locked && cell.fill !== null && cell.lookDown() && cell.lookDown().fill === null) {
       cascadePossible = true
       let cellData = {}
       cellData.cellIdx = cell.cellIdx
@@ -456,7 +475,7 @@ function cascade() {
       // - boardCells[cell.linkedTo].lookDown() (is this necessary?)
       // - !boardCells[cell.linkedTo].lookDown().fill
       // - !linkedCellsToCascade.includes(cell.cellIdx)
-    if (cell.linkedTo && cell.lookDown() && !cell.lookDown().fill && !boardCells[cell.linkedTo].lookDown().fill ) {
+    if (cell.linkedTo && cell.lookDown() && cell.lookDown().fill === null && boardCells[cell.linkedTo].lookDown().fill === null ) {
       cascadePossible = true
       let cellData = {}
       cellData.cellIdx = cell.cellIdx
@@ -464,7 +483,7 @@ function cascade() {
       linkedCellsToCascade.push(cellData)
     }
     // If linked vertical pair can cascade
-    if (cell.linkedTo && (cell.linkedTo === cell.cellIdx + 1 || cell.linkedTo === cell.cellIdx - 1) && cell.lookDown() && !cell.lookDown().fill ) {
+    if (cell.linkedTo && (cell.linkedTo === cell.cellIdx + 1 || cell.linkedTo === cell.cellIdx - 1) && cell.lookDown() && cell.lookDown().fill === null ) {
       cascadePossible = true
       let cellData = {}
       cellData.cellIdx = cell.cellIdx
@@ -488,7 +507,6 @@ function cascade() {
       if (!countRemainingBaddies()) {
         // move to next level
         clearInterval(gameTickInterval)
-        console.log('next level!')
         level += 1
         gameplayBtns.style.display = 'none'
         setMessageDisplay('next level')
@@ -548,7 +566,7 @@ function lockInPlace() {
 function generatePiece() {
   let randIdx1 = Math.floor(Math.random() * currentTheme.pieceColors.length)
   let randIdx2 = Math.floor(Math.random() * currentTheme.pieceColors.length)
-  return {color1: currentTheme.pieceColors[randIdx1], color2: currentTheme.pieceColors[randIdx2], color1CellIdx: 49, color2CellIdx: 65}
+  return {color1: randIdx1, color2: randIdx2, color1CellIdx: 49, color2CellIdx: 65}
 }
 
 function startNextPiece() {
@@ -559,20 +577,20 @@ function startNextPiece() {
   applyBorderRadius('left', 'right')
   renderBoard()
   clearInterval(gameTickInterval)
-  gameTickInterval = setInterval(gameTick, 500)
+  gameTickInterval = setInterval(gameTick, 300)
 }
 
 function checkForCollision() {
   if (currentPiece.orientation === 'vertical1') {
-    if (!boardCells[currentPiece.color1CellIdx].lookDown() || boardCells[currentPiece.color1CellIdx + 1].fill) {
+    if (!boardCells[currentPiece.color1CellIdx].lookDown() || boardCells[currentPiece.color1CellIdx + 1].fill !== null) {
       return true
     }
   } else if (currentPiece.orientation === 'vertical2') {
-    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].fill ) {
+    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].fill !== null ) {
       return true
     }
   } else {
-    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].fill || boardCells[currentPiece.color1CellIdx + 1].fill) {
+    if (!boardCells[currentPiece.color2CellIdx].lookDown() || boardCells[currentPiece.color2CellIdx + 1].fill !== null || boardCells[currentPiece.color1CellIdx + 1].fill !== null) {
       return true
     }
   }
@@ -587,9 +605,9 @@ function renderBoard() {
       cellEl.style.borderRadius = '10px'
       cellEl.style.backgroundColor = currentTheme.pieceColors[idxForStyling]
     } else {
-      cellEl.style.backgroundColor = currentTheme.pieceColors[currentTheme.pieceColors.indexOf(boardCells[idx].fill)]
+      cellEl.style.backgroundColor = currentTheme.pieceColors[boardCells[idx].fill]
     }
-    if (!boardCells[idx].fill) {
+    if (boardCells[idx].fill === null) {
       cellEl.style.backgroundColor = null
       cellEl.style.backgroundImage = null
       cellEl.style.borderRadius = null
@@ -750,17 +768,17 @@ function movePieceDown() {
     ((currentPiece.orientation === 'horizontal1' || currentPiece.orientation === 'horizontal2') && 
     (
       !boardCells[currentPiece.color1CellIdx].lookDown() ||
-      boardCells[currentPiece.color1CellIdx].lookDown().fill ||
-      boardCells[currentPiece.color2CellIdx].lookDown().fill
+      boardCells[currentPiece.color1CellIdx].lookDown().fill !== null ||
+      boardCells[currentPiece.color2CellIdx].lookDown().fill !== null
     )) ||
     // If piece is vertical and the spot below is locked or an edge
     (currentPiece.orientation === 'vertical1' && 
       (!boardCells[currentPiece.color1CellIdx].lookDown() ||
-      boardCells[currentPiece.color1CellIdx].lookDown().fill)
+      boardCells[currentPiece.color1CellIdx].lookDown().fill !== null)
     ) ||
     (currentPiece.orientation === 'vertical2' && 
       (!boardCells[currentPiece.color2CellIdx].lookDown() ||
-      boardCells[currentPiece.color2CellIdx].lookDown().fill)
+      boardCells[currentPiece.color2CellIdx].lookDown().fill !== null)
     ) 
   ) {
     handleCollision()
