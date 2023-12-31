@@ -1,6 +1,6 @@
 /*-------------------------------- Constants --------------------------------*/
 
-import { marioTheme, pacmanTheme } from "./themes.js"
+import { marioTheme, marioThemeMusic, pacmanTheme, pacmanThemeMusic } from "./themes.js"
 
 const edgeIdxValues = {
   top: [0, 16, 32, 48, 64, 80, 96, 112],
@@ -55,8 +55,8 @@ class Cell {
 
 /*---------------------------- Variables (state) ----------------------------*/
 let currentPiece, nextPiece, boardCellElements, gameTickInterval
-let score, cascadeActive, highScores, playerName, gameIsPaused, level
-let currentVolume = 50, previousVolume = 50, audioIsMuted = false
+let score, cascadeActive, highScores, gameIsPaused, level
+let currentVolume = 50, previousVolume = 50, audioIsMuted = false, currentAudio, audioIsPlaying = false
 let boardCells = []
 let currentTheme = {}
 
@@ -84,6 +84,8 @@ const messageBtn1 = document.querySelector('#message-button-1')
 const messageBtn2 = document.querySelector('#message-button-2')
 const pacmanThemeBtn = document.querySelector('#pacman-theme-button')
 const marioThemeBtn = document.querySelector('#mario-theme-button')
+const pacmanMusicBtn = document.querySelector('#pacman-music-button')
+const marioMusicBtn = document.querySelector('#mario-music-button')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (evt) => {
@@ -115,11 +117,16 @@ closeHighScoresBtn.addEventListener('click', handleOpenCloseHighScores)
 messageBtn1.addEventListener('click', handleClickMessageButton1)
 messageBtn2.addEventListener('click', handleClickMessageButton2)
 pacmanThemeBtn.addEventListener('click', () => changeTheme('pacman'))
+pacmanMusicBtn.addEventListener('click', () => changeMusic('pacman'))
 marioThemeBtn.addEventListener('click', () => changeTheme('mario'))
+marioMusicBtn.addEventListener('click', () => changeMusic('mario'))
 
 /*-------------------------------- Functions --------------------------------*/
 
 currentTheme = pacmanTheme
+currentAudio = pacmanThemeMusic
+currentAudio.loop = true
+currentAudio.volume = currentVolume / 100
 init()
 
 
@@ -137,7 +144,6 @@ async function init() {
 }
 
 function changeTheme(newTheme) {
-  
   pacmanThemeBtn.className = ''
   marioThemeBtn.className = ''
   if (newTheme === 'pacman') {
@@ -151,9 +157,30 @@ function changeTheme(newTheme) {
   }
 }
 
+function changeMusic(newMusic) {
+  marioMusicBtn.className = ''
+  pacmanMusicBtn.className = ''
+  if (newMusic === 'mario') {
+    currentAudio.pause()
+    currentAudio = marioThemeMusic
+    currentAudio.loop = true
+    currentAudio.volume = currentVolume / 100
+    currentAudio.play()
+    marioMusicBtn.className = 'rainbow-border'
+  } else if (newMusic === 'pacman') {
+    currentAudio.pause()
+    currentAudio = pacmanThemeMusic
+    currentAudio.loop = true
+    currentAudio.volume = currentVolume / 100
+    currentAudio.play()
+    pacmanMusicBtn.className = 'rainbow-border'
+  }
+}
+
 function adjustVolume(evt) {
   volumeLabel.textContent = `Volume: ${evt.target.value}%`
   currentVolume = parseInt(evt.target.value)
+  currentAudio.volume = currentVolume / 100
 }
 
 function toggleAudio() {
@@ -169,6 +196,7 @@ function toggleAudio() {
   }
   volumeLabel.textContent = `Volume: ${currentVolume}%`
   volumeSlider.value = currentVolume
+  currentAudio.volume = currentVolume / 100
 }
 
 function handleClickMessageButton1() {
@@ -179,6 +207,7 @@ function handleClickMessageButton1() {
       nameInput.focus()
     }
   } else {
+    if (!audioIsPlaying) currentAudio.play()
     setMessageDisplay('hide')
     if(boardElement.style.display) toggleBoard()
     startNewLevel(level)
@@ -201,6 +230,8 @@ function setMessageDisplay(action) {
     messageBtn2.style.display = 'none'
   }
   if (action === 'game over') {
+    currentAudio.pause()
+    currentAudio.currentTime = 0
     toggleBoard()
     messageBtn2.style.display = ''
     nameInput.style.display = ''

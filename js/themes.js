@@ -1,3 +1,6 @@
+const pacmanThemeMusic = new Audio('../assets/audio/pacman.mp3')
+const marioThemeMusic = new Audio('../assets/audio/mario.mp3')
+
 const marioTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
   baddieUrls: ["url('./assets/images/purpshell.gif')", "url('./assets/images/bobomb.gif')", "url('./assets/images/goomba.gif')"],
@@ -12,5 +15,7 @@ const pacmanTheme = {
 
 export {
   marioTheme,
-  pacmanTheme
+  pacmanTheme,
+  pacmanThemeMusic,
+  marioThemeMusic
 }
