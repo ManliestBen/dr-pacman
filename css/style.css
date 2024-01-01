@@ -225,7 +225,15 @@ button {
   position: relative;
 }
 
-.rainbow-border:before, .rainbow-border:after {
+.rainbow-border-totmode {
+  position: relative;
+}
+
+.rainbow-border-loading {
+  position: relative;
+}
+
+.rainbow-border:before, .rainbow-border:after, .rainbow-border-totmode:before, .rainbow-border-totmode:after {
 	content: '';
 	position: absolute;
 	left: -2px;
@@ -236,6 +244,20 @@ button {
 	width: calc(100% + 4px);
 	height: calc(100% + 4px);
 	z-index: -1;
+	animation: steam 20s linear infinite;
+}
+
+.rainbow-border-loading:before, .rainbow-border-loading:after {
+	content: '';
+	position: absolute;
+	left: -2px;
+	top: -2px;
+	background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094, 
+		#0000ff, #00ff00,#ffff00, #ff0000);
+	background-size: 400%;
+	width: calc(100% + 4px);
+	height: calc(100% + 4px);
+	z-index: 1;
 	animation: steam 20s linear infinite;
 }
 
@@ -251,6 +273,27 @@ button {
 	}
 }
 
-.rainbow-border:after {
+.rainbow-border:after, .rainbow-border-totmode:after, .rainbow-border-loading:after {
 	filter: blur(50px);
+}
+
+#tot-loading-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 330px;
+  color: white;
+  font-size: 30px;
+  text-align: center;
+}
+
+#tot-loading-display > img {
+  width: 150px;
+}
+
+#loading-bar {
+  height: 20px;
+  margin-bottom: 30px;
+  
 }

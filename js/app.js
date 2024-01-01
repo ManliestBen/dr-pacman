@@ -1,6 +1,6 @@
 /*-------------------------------- Constants --------------------------------*/
 
-import { marioTheme, marioThemeMusic, pacmanTheme, pacmanThemeMusic } from "./themes.js"
+import { marioTheme, marioThemeMusic, pacmanTheme, pacmanThemeMusic, totTheme, totThemeMusic } from "./themes.js"
 
 const edgeIdxValues = {
   top: [0, 16, 32, 48, 64, 80, 96, 112],
@@ -54,11 +54,12 @@ class Cell {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentPiece, nextPiece, boardCellElements, gameTickInterval
+let currentPiece, nextPiece, boardCellElements, gameTickInterval, totMode = false
 let score, cascadeActive, highScores, gameIsPaused, level
-let currentVolume = 50, previousVolume = 50, audioIsMuted = false, currentAudio, audioIsPlaying = false
+let currentVolume = 1, previousVolume = 1, audioIsMuted = false, currentAudio, audioIsPlaying = false
 let boardCells = []
 let currentTheme = {}
+let keysPressed = ''
 
 /*------------------------ Cached Element References ------------------------*/
 const boardElement = document.querySelector('#board')
@@ -86,9 +87,20 @@ const pacmanThemeBtn = document.querySelector('#pacman-theme-button')
 const marioThemeBtn = document.querySelector('#mario-theme-button')
 const pacmanMusicBtn = document.querySelector('#pacman-music-button')
 const marioMusicBtn = document.querySelector('#mario-music-button')
+const totLoadingElement = document.querySelector('#tot-loading-display')
+const loadingBar = document.querySelector('#loading-bar')
+const loadingPercentage = document.querySelector('#loading-percentage')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (evt) => {
+  keysPressed += evt.key
+  if (!'totmode'.includes(keysPressed)) {
+    keysPressed = ''
+  }
+  if (keysPressed === 'totmode') {
+    changeTheme('totmode')
+    keysPressed = ''
+  }
   if (!cascadeActive && gameTickInterval && !gameIsPaused) {
     if (evt.key === 's') {
       movePieceDown()
@@ -131,6 +143,7 @@ init()
 
 
 async function init() {
+  totLoadingElement.style.display = 'none'
   if (!menuElement.style.display) toggleMenu()
   if (!messageElement.style.display) messageElement.style.display = 'none'
   gameIsPaused = true
@@ -143,38 +156,80 @@ async function init() {
   highScores = await fetchHighScores()
 }
 
+
 function changeTheme(newTheme) {
+  totMode = false
+  boardElement.className = 'rainbow-border'
   pacmanThemeBtn.className = ''
   marioThemeBtn.className = ''
+  // theme3 button class name setting
   if (newTheme === 'pacman') {
     pacmanThemeBtn.className = 'rainbow-border'
     currentTheme = pacmanTheme
-    renderBoard()
   } else if (newTheme === 'mario') {
     marioThemeBtn.className = 'rainbow-border'
     currentTheme = marioTheme
-    renderBoard()
+  } else if (newTheme === 'theme3') {
+
+  } else if (newTheme === 'totmode') {
+    gameIsPaused = true
+    clearInterval(gameTickInterval)
+    totMode = true
+    boardElement.className = 'rainbow-border-totmode'
+    currentTheme = totTheme
+    changeMusic('totmode')
+    startTotLoadingScreen()
+  }
+  renderBoard()
+}
+
+function startTotLoadingScreen() {
+  totLoadingElement.style.display = ''
+  menuElement.style.display = 'none'
+  menuBtn.style.display = 'none'
+  boardElement.style.display = 'none'
+  gameplayBtns.style.display = 'none'
+  levelInfoElement.style.display = 'none'
+  highScoresElement.style.display = 'none'
+  messageDisplayElement.style.display = 'none'
+  totProgressBarAnimation()
+}
+
+function totProgressBarAnimation() {
+  let width = 1
+  let barInterval = setInterval(increaseWidth, 125)
+  function increaseWidth() {
+    if (width < 80) {
+      width ++
+      loadingBar.style.width = `${width}%`
+      loadingPercentage.textContent = `${Math.floor(width / 80 * 100)}%`
+    } else {
+      clearInterval(barInterval)
+      totLoadingElement.style.display = 'none'
+      score = 0
+      setTimeout(() => startNewLevel(1), 500)
+    }
   }
 }
 
 function changeMusic(newMusic) {
   marioMusicBtn.className = ''
   pacmanMusicBtn.className = ''
+  currentAudio.pause()
   if (newMusic === 'mario') {
-    currentAudio.pause()
     currentAudio = marioThemeMusic
-    currentAudio.loop = true
-    currentAudio.volume = currentVolume / 100
-    currentAudio.play()
     marioMusicBtn.className = 'rainbow-border'
   } else if (newMusic === 'pacman') {
-    currentAudio.pause()
     currentAudio = pacmanThemeMusic
-    currentAudio.loop = true
-    currentAudio.volume = currentVolume / 100
-    currentAudio.play()
     pacmanMusicBtn.className = 'rainbow-border'
+  } else if (newMusic === 'theme3') {
+
+  } else if (newMusic === 'totmode') {
+    currentAudio = totThemeMusic
   }
+  currentAudio.loop = true
+  currentAudio.volume = currentVolume / 100
+  currentAudio.play()
 }
 
 function adjustVolume(evt) {
@@ -273,6 +328,9 @@ function toggleBoard() {
 
 function startNewLevel(levelNum) {
   gameplayBtns.style.display = ''
+  boardElement.style.display = ''
+  levelInfoElement.style.display = ''
+  menuBtn.style.display = ''
   gameIsPaused = false
   level = levelNum
   cascadeActive = false
@@ -608,7 +666,7 @@ function startNextPiece() {
   applyBorderRadius('left', 'right')
   renderBoard()
   clearInterval(gameTickInterval)
-  gameTickInterval = setInterval(gameTick, 300)
+  gameTickInterval = setInterval(gameTick, 1000)
 }
 
 function checkForCollision() {
@@ -636,7 +694,14 @@ function renderBoard() {
       cellEl.style.borderRadius = '10px'
       cellEl.style.backgroundColor = currentTheme.pieceColors[idxForStyling]
     } else {
-      cellEl.style.backgroundColor = currentTheme.pieceColors[boardCells[idx].fill]
+      if (totMode) {
+        cellEl.style.backgroundImage = currentTheme.pieceUrls[boardCells[idx].fill]
+        cellEl.style.backgroundSize = "3.5vh"
+
+      } else {
+        cellEl.style.backgroundImage = ''
+        cellEl.style.backgroundColor = currentTheme.pieceColors[boardCells[idx].fill]
+      }
     }
     if (boardCells[idx].fill === null) {
       cellEl.style.backgroundColor = null
