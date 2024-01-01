@@ -21,7 +21,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* background-color: #bf8b3d; */
+  /* background-color: #3c4bd2; */
 }
 
 .right-border-radius {
@@ -218,6 +218,10 @@ button {
 
 #theme-buttons > button > img {
   width: 60px;
+}
+
+#theme-buttons > button:nth-child(3) > img {
+  width: 48px;
 }
 
 .rainbow-border {

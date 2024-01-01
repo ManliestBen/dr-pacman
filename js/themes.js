@@ -1,6 +1,7 @@
 const pacmanThemeMusic = new Audio('../assets/audio/pacman.mp3')
 const marioThemeMusic = new Audio('../assets/audio/mario.mp3')
 const totThemeMusic = new Audio('../assets/audio/totmode.mp3')
+const zeldaThemeMusic = new Audio('../assets/audio/zelda.mp3')
 
 const marioTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
@@ -12,6 +13,13 @@ const pacmanTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
   baddieUrls: ["url('./assets/images/clyde.gif')", "url('./assets/images/pinky.gif')", "url('./assets/images/inky.gif')"],
   pieceColors: ['#db7800', '#e18695', 'cornflowerblue'],
+}
+
+const zeldaTheme = {
+  baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
+  baddieUrls: ["url('./assets/images/octorock.gif')", "url('./assets/images/moblin.gif')", "url('./assets/images/wizzrobe.gif')"],
+  pieceColors: ['#3c4bd2', '#16504a', '#906526'],
+
 }
 
 const totTheme = {
@@ -27,5 +35,7 @@ export {
   pacmanThemeMusic,
   marioThemeMusic,
   totTheme,
-  totThemeMusic
+  totThemeMusic,
+  zeldaTheme,
+  zeldaThemeMusic
 }

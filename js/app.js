@@ -1,6 +1,6 @@
 /*-------------------------------- Constants --------------------------------*/
 
-import { marioTheme, marioThemeMusic, pacmanTheme, pacmanThemeMusic, totTheme, totThemeMusic } from "./themes.js"
+import { marioTheme, marioThemeMusic, pacmanTheme, pacmanThemeMusic, totTheme, totThemeMusic, zeldaTheme, zeldaThemeMusic } from "./themes.js"
 
 const edgeIdxValues = {
   top: [0, 16, 32, 48, 64, 80, 96, 112],
@@ -84,8 +84,10 @@ const nameInput = document.querySelector('#player-name')
 const messageBtn1 = document.querySelector('#message-button-1')
 const messageBtn2 = document.querySelector('#message-button-2')
 const pacmanThemeBtn = document.querySelector('#pacman-theme-button')
+const zeldaThemeBtn = document.querySelector('#zelda-theme-button')
 const marioThemeBtn = document.querySelector('#mario-theme-button')
 const pacmanMusicBtn = document.querySelector('#pacman-music-button')
+const zeldaMusicBtn = document.querySelector('#zelda-music-button')
 const marioMusicBtn = document.querySelector('#mario-music-button')
 const totLoadingElement = document.querySelector('#tot-loading-display')
 const loadingBar = document.querySelector('#loading-bar')
@@ -132,6 +134,8 @@ pacmanThemeBtn.addEventListener('click', () => changeTheme('pacman'))
 pacmanMusicBtn.addEventListener('click', () => changeMusic('pacman'))
 marioThemeBtn.addEventListener('click', () => changeTheme('mario'))
 marioMusicBtn.addEventListener('click', () => changeMusic('mario'))
+zeldaThemeBtn.addEventListener('click', () => changeTheme('zelda'))
+zeldaMusicBtn.addEventListener('click', () => changeMusic('zelda'))
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -162,6 +166,7 @@ function changeTheme(newTheme) {
   boardElement.className = 'rainbow-border'
   pacmanThemeBtn.className = ''
   marioThemeBtn.className = ''
+  zeldaThemeBtn.className = ''
   // theme3 button class name setting
   if (newTheme === 'pacman') {
     pacmanThemeBtn.className = 'rainbow-border'
@@ -169,8 +174,9 @@ function changeTheme(newTheme) {
   } else if (newTheme === 'mario') {
     marioThemeBtn.className = 'rainbow-border'
     currentTheme = marioTheme
-  } else if (newTheme === 'theme3') {
-
+  } else if (newTheme === 'zelda') {
+    zeldaThemeBtn.className = 'rainbow-border'
+    currentTheme = zeldaTheme
   } else if (newTheme === 'totmode') {
     gameIsPaused = true
     clearInterval(gameTickInterval)
@@ -215,6 +221,7 @@ function totProgressBarAnimation() {
 function changeMusic(newMusic) {
   marioMusicBtn.className = ''
   pacmanMusicBtn.className = ''
+  zeldaMusicBtn.className = ''
   currentAudio.pause()
   if (newMusic === 'mario') {
     currentAudio = marioThemeMusic
@@ -222,10 +229,12 @@ function changeMusic(newMusic) {
   } else if (newMusic === 'pacman') {
     currentAudio = pacmanThemeMusic
     pacmanMusicBtn.className = 'rainbow-border'
-  } else if (newMusic === 'theme3') {
-
+  } else if (newMusic === 'zelda') {
+    currentAudio = zeldaThemeMusic
+    zeldaMusicBtn.className = 'rainbow-border'
   } else if (newMusic === 'totmode') {
     currentAudio = totThemeMusic
+    currentAudio.currentTime = 27
   }
   currentAudio.loop = true
   currentAudio.volume = currentVolume / 100
