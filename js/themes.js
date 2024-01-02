@@ -71,7 +71,7 @@ const zeldaTheme = {
 const totTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
   baddieUrls: ["url('./assets/images/dancingrbtot.gif')", "url('./assets/images/dancingpgtot.gif')", "url('./assets/images/dancingoytot.gif')"],
-  pieceColors: ['#db7800', '#e18695', 'cornflowerblue'],
+  pieceColors: ['#fb0094', '#0000ff', '#00ff00','#ffff00', '#ff0000', '#fb0094','#0000ff', '#00ff00','#ffff00', '#ff0000'],
   pieceUrls: ["url('./assets/images/rbbg.gif')", "url('./assets/images/pgbg.gif')", "url('./assets/images/oybg.gif')"]
 }
 

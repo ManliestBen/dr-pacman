@@ -612,7 +612,6 @@ function cascade() {
         gameplayBtns.style.display = 'none'
         currentAudio.pause()
         setTimeout(() => {currentTheme.levelUpSound(currentVolume / 100)}, 100)
-        
         confetti.start(1500, currentTheme.pieceColors)
         setMessageDisplay('next level')
       } else {
@@ -669,8 +668,8 @@ function lockInPlace() {
 }
 
 function generatePiece() {
-  let randIdx1 = Math.floor(Math.random() * currentTheme.pieceColors.length)
-  let randIdx2 = Math.floor(Math.random() * currentTheme.pieceColors.length)
+  let randIdx1 = totMode ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * currentTheme.pieceColors.length)
+  let randIdx2 = totMode ? Math.floor(Math.random() * 3) : Math.floor(Math.random() * currentTheme.pieceColors.length)
   return {color1: randIdx1, color2: randIdx2, color1CellIdx: 49, color2CellIdx: 65}
 }
 
