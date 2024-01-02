@@ -915,4 +915,3 @@ function addBaddies() {
     boardCells[baddieIdx].locked = true
   })
 }
-
