@@ -380,7 +380,7 @@ function handleGameplayClick(evt) {
 }
 
 async function fetchHighScores() {
-  return fetch('https://high-score-api.fly.dev/api/scores/?game=tbd')
+  return fetch('https://high-score-api.fly.dev/api/scores/?game=tot-drop')
   .then(res => res.json())
 }
 
@@ -452,7 +452,7 @@ function submitScore(playerName, newScore) {
   fetch('https://high-score-api.fly.dev/api/scores/', {
     method: 'POST',
     body: JSON.stringify({
-      game: 'tbd',
+      game: 'tot-drop',
       player: playerName,
       score: newScore
     }),
