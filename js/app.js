@@ -1,6 +1,6 @@
 /*-------------------------------- Constants --------------------------------*/
 
-import { marioTheme, marioThemeMusic, pacmanTheme, pacmanThemeMusic, totTheme, totThemeMusic, zeldaTheme, zeldaThemeMusic } from "./themes.js"
+import { marioTheme, marioThemeMusic, pacmanTheme, pacmanThemeMusic, totTheme, totThemeMusic, zeldaTheme, zeldaThemeMusic, playPauseSound } from "./themes.js"
 
 const edgeIdxValues = {
   top: [0, 16, 32, 48, 64, 80, 96, 112],
@@ -316,6 +316,7 @@ function toggleHighScoreList(optionalScoreData) {
 }
 
 function handleClickMenuOrResume() {
+  if (!gameIsPaused && boardElement.style.display === '') playPauseSound(currentVolume / 100)
   toggleBoard()
   toggleMenu()
 }

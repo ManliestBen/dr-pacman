@@ -14,6 +14,7 @@ const zeldaGameOver = new Audio('../assets/audio/zelda3.wav')
 const totmodeLevelUp = new Audio('../assets/audio/totmode1.mp3')
 const totmodeClearBlocks = new Audio('../assets/audio/totmode2.wav')
 const totmodeGameOver = new Audio('../assets/audio/totmode3.mp3')
+const pauseSound = new Audio('../assets/audio/pause.mp3')
 
 const marioTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
@@ -90,6 +91,11 @@ const totTheme = {
   },
 }
 
+function playPauseSound(currentVolume) {
+  pauseSound.volume = currentVolume
+  pauseSound.play()
+}
+
 export {
   marioTheme,
   pacmanTheme,
@@ -98,5 +104,6 @@ export {
   totTheme,
   totThemeMusic,
   zeldaTheme,
-  zeldaThemeMusic
+  zeldaThemeMusic,
+  playPauseSound
 }
