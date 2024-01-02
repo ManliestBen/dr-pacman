@@ -334,6 +334,7 @@ function toggleBoard() {
 
 
 function startNewLevel(levelNum) {
+  if (currentAudio.paused) currentAudio.play()
   gameplayBtns.style.display = ''
   boardElement.style.display = ''
   levelInfoElement.style.display = ''
@@ -609,6 +610,10 @@ function cascade() {
         clearInterval(gameTickInterval)
         level += 1
         gameplayBtns.style.display = 'none'
+        currentAudio.pause()
+        setTimeout(() => {currentTheme.levelUpSound(currentVolume / 100)}, 100)
+        
+        confetti.start(1500, currentTheme.pieceColors)
         setMessageDisplay('next level')
       } else {
         setTimeout(() => {
