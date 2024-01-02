@@ -11,6 +11,9 @@ const marioGameOver = new Audio('../assets/audio/mario3.mp3')
 const zeldaLevelUp = new Audio('../assets/audio/zelda1.wav')
 const zeldaClearBlocks = new Audio('../assets/audio/zelda2.wav')
 const zeldaGameOver = new Audio('../assets/audio/zelda3.wav')
+const totmodeLevelUp = new Audio('../assets/audio/totmode1.mp3')
+const totmodeClearBlocks = new Audio('../assets/audio/totmode2.wav')
+const totmodeGameOver = new Audio('../assets/audio/totmode3.mp3')
 
 const marioTheme = {
   baddieTypes: ['baddie1', 'baddie2', 'baddie3'],
@@ -74,16 +77,16 @@ const totTheme = {
   pieceColors: ['#fb0094', '#0000ff', '#00ff00','#ffff00', '#ff0000', '#fb0094','#0000ff', '#00ff00','#ffff00', '#ff0000'],
   pieceUrls: ["url('./assets/images/rbbg.gif')", "url('./assets/images/pgbg.gif')", "url('./assets/images/oybg.gif')"],
   levelUpSound: function(volume) {
-    zeldaLevelUp.volume = volume
-    zeldaLevelUp.play()
+    totmodeLevelUp.volume = volume
+    totmodeLevelUp.play()
   },
   clearBlocksSound: function(volume) {
-    zeldaClearBlocks.volume = volume
-    zeldaClearBlocks.play()
+    totmodeClearBlocks.volume = volume
+    totmodeClearBlocks.play()
   },
   gameOverSound: function(volume) {
-    zeldaGameOver.volume = volume
-    zeldaGameOver.play()
+    totmodeGameOver.volume = volume
+    totmodeGameOver.play()
   },
 }
 
