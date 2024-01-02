@@ -56,7 +56,7 @@ class Cell {
 /*---------------------------- Variables (state) ----------------------------*/
 let currentPiece, nextPiece, boardCellElements, gameTickInterval, totMode = false
 let score, cascadeActive, highScores, gameIsPaused, level
-let currentVolume = 1, previousVolume = 1, audioIsMuted = false, currentAudio, audioIsPlaying = false
+let currentVolume = 50, previousVolume = 50, audioIsMuted = false, currentAudio, audioIsPlaying = false
 let boardCells = []
 let currentTheme = {}
 let keysPressed = ''
@@ -294,8 +294,6 @@ function setMessageDisplay(action) {
     messageBtn2.style.display = 'none'
   }
   if (action === 'game over') {
-    currentAudio.pause()
-    currentAudio.currentTime = 0
     toggleBoard()
     messageBtn2.style.display = ''
     nameInput.style.display = ''
@@ -502,6 +500,9 @@ function handleCollision() {
   if ((boardCells[49].fill || boardCells[65].fill) && (!getColumnMatchData().length && !getRowMatchData().length)) {
     clearInterval(gameTickInterval)
     gameTickInterval = null
+    currentAudio.pause()
+    currentAudio.currentTime = 0
+    setTimeout(() => {currentTheme.gameOverSound(currentVolume / 100)}, 200)
     setMessageDisplay('game over')
   } else {
     lockInPlace()
@@ -543,6 +544,7 @@ function clearCellsAndCalculatePoints() {
       })
     }
     score += calculatePoints(cellsToClear.length)
+    currentTheme.clearBlocksSound(currentVolume / 100)
     clearCells(cellsToClear)
     renderBoard()
     cascadeActive = true
