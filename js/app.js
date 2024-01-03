@@ -62,6 +62,7 @@ let currentTheme = {}
 let keysPressed = ''
 
 /*------------------------ Cached Element References ------------------------*/
+const bodyElement = document.querySelector('body')
 const boardElement = document.querySelector('#board')
 const menuElement = document.querySelector('#menu')
 const menuBtn = document.querySelector('#menu-button')
@@ -92,6 +93,13 @@ const marioMusicBtn = document.querySelector('#mario-music-button')
 const totLoadingElement = document.querySelector('#tot-loading-display')
 const loadingBar = document.querySelector('#loading-bar')
 const loadingPercentage = document.querySelector('#loading-percentage')
+const leftSharkElement = document.querySelector('#left-shark')
+const rightSharkElement = document.querySelector('#right-shark')
+const saxistElement = document.querySelector('#saxist')
+const carltonElement = document.querySelector('#carlton')
+const squeeElement = document.querySelector('#squee')
+const meowGuitarElement = document.querySelector('#meow-guitar')
+const obnoxiousContainers = document.querySelectorAll('.obnoxious-images-container')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (evt) => {
@@ -147,6 +155,7 @@ init()
 
 
 async function init() {
+  if (!totMode) deactivateObnoxious()
   totLoadingElement.style.display = 'none'
   if (!menuElement.style.display) toggleMenu()
   if (!messageElement.style.display) messageElement.style.display = 'none'
@@ -163,6 +172,7 @@ async function init() {
 
 function changeTheme(newTheme) {
   totMode = false
+  deactivateObnoxious()
   boardElement.className = 'rainbow-border'
   pacmanThemeBtn.className = ''
   marioThemeBtn.className = ''
@@ -189,7 +199,60 @@ function changeTheme(newTheme) {
   renderBoard()
 }
 
+
+function activateObnoxious() {
+  obnoxiousContainers.forEach(el => el.style.display = '')
+  setTimeout(() => {
+    squeeElement.style.display = ''
+    squeeElement.setAttribute('src', './assets/images/squee.gif')
+  }, 500)
+  setTimeout(() => {
+    carltonElement.style.display = ''
+    carltonElement.setAttribute('src', './assets/images/carlton.gif')
+  }, 1000)
+  setTimeout(() => {
+    rightSharkElement.style.display = ''
+    rightSharkElement.setAttribute('src', './assets/images/rightshark.gif')
+  }, 1500)
+  setTimeout(() => {
+    leftSharkElement.style.display = ''
+    leftSharkElement.setAttribute('src', './assets/images/leftshark.gif')
+  }, 2000)
+  setTimeout(() => {
+    meowGuitarElement.style.display = ''
+    meowGuitarElement.setAttribute('src', './assets/images/meowguitar.gif')
+  }, 2500)
+  setTimeout(() => {
+    saxistElement.style.display = ''
+    saxistElement.setAttribute('src', './assets/images/saxist.gif')
+  }, 3000)
+  setTimeout(() => {
+    bodyElement.style.backgroundImage = 'url(./assets/images/sparkletot.gif)'
+  }, 3500)
+  setTimeout(() => {
+    confetti.start(2500, currentTheme.pieceColors)
+  }, 4000)
+}
+
+function deactivateObnoxious() {
+  bodyElement.style.backgroundImage = ''
+  obnoxiousContainers.forEach(el => el.style.display = 'none')
+  leftSharkElement.style.display = 'none'
+  leftSharkElement.setAttribute('src', '')
+  rightSharkElement.style.display = 'none'
+  rightSharkElement.setAttribute('src', '')
+  carltonElement.style.display = 'none'
+  carltonElement.setAttribute('src', '')
+  saxistElement.style.display = 'none'
+  saxistElement.setAttribute('src', '')
+  squeeElement.style.display = 'none'
+  squeeElement.setAttribute('src', '')
+  meowGuitarElement.style.display = 'none'
+  meowGuitarElement.setAttribute('src', '')
+}
+
 function startTotLoadingScreen() {
+  setTimeout(activateObnoxious, 2500)
   totLoadingElement.style.display = ''
   menuElement.style.display = 'none'
   menuBtn.style.display = 'none'

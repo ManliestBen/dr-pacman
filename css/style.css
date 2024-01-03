@@ -2,16 +2,46 @@ body {
   height: 100vh;
   background-color: rgb(90, 90, 90);
   color: black;
-
+  background-repeat: round;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 0px;
 }
 
+#game-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 #board {
   display: flex;
+}
+
+.obnoxious-images-container {
+  width: 30vh;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#meow-guitar, #saxist, #carlton {
+  width: 20vh;
+}
+
+.obnoxious-images-container > img {
+  width: 100%;
+}
+
+
+@media (max-width: 800px) {
+  .obnoxious-images-container {
+    display: none
+  }
 }
 
 .cell {
@@ -21,7 +51,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* background-color: #3c4bd2; */
 }
 
 .right-border-radius {

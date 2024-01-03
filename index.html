@@ -16,57 +16,69 @@
   <title>Drop it like it's tot</title>
 </head>
 <body>
-  <div class="center-container">
-    <div class="level-info">
-      <p id="level-display">Level:</p>
-      <p id="score-display">Score: 1234</p>
-    </div>
-    <div class="rainbow-border" id="board"></div>
-    <div class="rainbow-border" id="tot-loading-display">
-      <p>INITIALIZING TOT MODE</p>
-      <img src="./assets/images/dancingtot.gif" alt="dancing tater tot">
-      <p id="loading-percentage">0%</p>
-      <div id="loading-bar" class="rainbow-border-loading"></div>
-    </div>
-    <div id="message-display">
-      <p id="message"></p>
-      <input type="text" name="name" id="player-name" placeholder="Enter Initials" maxlength="3" minlength="1">
-      <button id="message-button-1">Start Level 1</button>
-      <button id="message-button-2">No Thanks</button>
-    </div>
-    <div id="high-scores-list">
-      <button id="close-high-scores-button">Back</button>
-      <div id="scores-container"></div>
-    </div>
-    <div id="menu">
-      <button id="reset-button">Start Over</button>
-      <button id="high-scores-button">High Scores</button>
-      <div id="music-buttons">
-        <button id="pacman-music-button" class="rainbow-border">Music A</button>
-        <button id="mario-music-button">Music B</button>
-        <button id="zelda-music-button">Music C</button>
+  <div class="obnoxious-images-container">
+    <img id="carlton" src="" alt="carlton dancing like carlton">
+    <img id="saxist" src="" alt="a saxophonist">
+    <img id="left-shark" src="" alt="a dancing shark">
+  </div>
+  <div id="game-container">
+    <div class="center-container">
+      <div class="level-info">
+        <p id="level-display">Level:</p>
+        <p id="score-display">Score: 1234</p>
       </div>
-      <div id="volume-container">
-        <input type="range" name="volume-control" id="volume-control" min="0" max="100" step="1">
-        <label id="volume-label" for="volume-control">Volume: 100%</label>
+      <div class="rainbow-border" id="board"></div>
+      <div class="rainbow-border" id="tot-loading-display">
+        <p>INITIALIZING TOT MODE</p>
+        <img src="./assets/images/dancingtot.gif" alt="dancing tater tot">
+        <p id="loading-percentage">0%</p>
+        <div id="loading-bar" class="rainbow-border-loading"></div>
       </div>
-      <button id="mute-button">Mute Audio</button>
-      <div id="theme-buttons">
-        <button class="rainbow-border" id="pacman-theme-button"><img src="./assets/images/blinky.gif" alt="pacman chomping"></button>
-        <button id="mario-theme-button"><img src="./assets/images/qbox.gif" alt="coin question box"></button>
-        <button id="zelda-theme-button"><img src="./assets/images/link.gif" alt="link walking with a shield"></button>
+      <div id="message-display">
+        <p id="message"></p>
+        <input type="text" name="name" id="player-name" placeholder="Enter Initials" maxlength="3" minlength="1">
+        <button id="message-button-1">Start Level 1</button>
+        <button id="message-button-2">No Thanks</button>
       </div>
-      <button id="resume-button">Resume</button>
+      <div id="high-scores-list">
+        <button id="close-high-scores-button">Back</button>
+        <div id="scores-container"></div>
+      </div>
+      <div id="menu">
+        <button id="reset-button">Start Over</button>
+        <button id="high-scores-button">High Scores</button>
+        <div id="music-buttons">
+          <button id="pacman-music-button" class="rainbow-border">Music A</button>
+          <button id="mario-music-button">Music B</button>
+          <button id="zelda-music-button">Music C</button>
+        </div>
+        <div id="volume-container">
+          <input type="range" name="volume-control" id="volume-control" min="0" max="100" step="1">
+          <label id="volume-label" for="volume-control">Volume: 100%</label>
+        </div>
+        <button id="mute-button">Mute Audio</button>
+        <div id="theme-buttons">
+          <button class="rainbow-border" id="pacman-theme-button"><img src="./assets/images/blinky.gif" alt="pacman chomping"></button>
+          <button id="mario-theme-button"><img src="./assets/images/qbox.gif" alt="coin question box"></button>
+          <button id="zelda-theme-button"><img src="./assets/images/link.gif" alt="link walking with a shield"></button>
+        </div>
+        <button id="resume-button">Resume</button>
+      </div>
+    </div>
+    <button id="menu-button">Menu</button>
+    <div class="gameplay-buttons">
+      <button id="left-button"></button>
+      <div class="center-buttons">
+        <button id="rotate-button"></button>
+        <button id="down-button"></button>
+      </div>
+      <button id="right-button"></button>
     </div>
   </div>
-  <button id="menu-button">Menu</button>
-  <div class="gameplay-buttons">
-    <button id="left-button"></button>
-    <div class="center-buttons">
-      <button id="rotate-button"></button>
-      <button id="down-button"></button>
-    </div>
-    <button id="right-button"></button>
+  <div class="obnoxious-images-container">
+    <img id="squee" src="" alt="a guy screaming with glee">
+    <img id="meow-guitar" src="" alt="a cat playing a guitar">
+    <img id="right-shark" src="" alt="a dancing shark">
   </div>
 </body>
 </html>
